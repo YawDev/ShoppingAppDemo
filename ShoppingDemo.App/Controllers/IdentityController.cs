@@ -1,0 +1,201 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Shopper.App.Models;
+using ShoppingDemo.App.Data.Entites;
+using ShoppingDemo.App.Mapping;
+using ShoppingDemo.App.Services;
+using ShoppingDemo.EFCore;
+using System.Linq;
+
+namespace ShoppingDemo.App.Controllers
+{
+    public class IdentityController :  Controller
+    {
+        private readonly ILogger<IdentityController> _logger;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserRepository _userRepository;
+        private readonly IUserDetailsComposition _userDetailsComposition;
+
+
+        IMapper _mapper;
+
+
+        public IdentityController(ILogger<IdentityController> logger, SignInManager<ApplicationUser> signInManager,  UserManager<ApplicationUser> userManager,
+        IUserRepository userRepository, IUserDetailsComposition userDetailsComposition)
+        {
+            _logger = logger;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _userRepository = userRepository;
+            _userDetailsComposition = userDetailsComposition;
+            _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
+        }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        public IActionResult Logout()
+        {
+            _signInManager.SignOutAsync();
+            return RedirectToAction("Login");
+        }
+
+        [HttpPost]
+        public IActionResult Login(LoginModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                
+                var user = _userRepository.GetByUserName(model.Username);
+                if(user == null)
+                {
+                    ViewBag.Message = "User not found.";
+                    return View(model);
+                }
+                var isSuccess = _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
+                
+                if(isSuccess.Result.Succeeded)
+                    return RedirectToAction("Index", "Home");
+                
+                return View(model);
+            }
+        
+            return View(model);
+        }
+
+
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Register(RegisterModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var user =  new ApplicationUser
+                {
+                    Email = model.Email,
+                    UserName = model.Username
+                }; 
+                _userManager.CreateAsync(user,model.Password);
+                _userRepository.CreateUser(user);
+                _userRepository.Commit();
+                return RedirectToAction("Login");
+            }
+            return View(model);
+        }
+
+        public IActionResult ViewAccount()
+        {
+            if(_signInManager.IsSignedIn(User))
+            {
+                var user = _userRepository.GetByUserId(_userManager.GetUserId(User));
+                var cardInfo = _userRepository.GetCardInformation(user.Id);
+                var shippingAddress = _userRepository.GetShippingAddress(user.Id);
+                var model = new AccountModel()
+                {
+                    Email = user.Email,
+                    Username = user.UserName
+                };
+                if(cardInfo is null)
+                    cardInfo = new CardInformation();
+
+                if(shippingAddress is null)
+                    shippingAddress = new ShippingAddress();
+
+                model.Address = _mapper.Map<AddressModel>(shippingAddress);
+                model.CardInfo = _mapper.Map<CardInfoModel>(cardInfo);
+                return View(model);
+            }
+            return RedirectToAction("Login");
+        }
+
+
+        public IActionResult EditAddress()
+        {
+            if(_signInManager.IsSignedIn(User))
+            {
+                var shippingAddress = _userRepository.GetShippingAddress(_userManager.GetUserAsync(User).Result.Id);
+                if(shippingAddress == null)
+                {
+                    shippingAddress = new ShippingAddress();
+                }
+
+                
+                return View(_mapper.Map<AddressModel>(shippingAddress));
+            }
+            return RedirectToAction("Login");
+        }
+
+        [HttpPost]
+        public IActionResult EditAddress(AddressModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var user = _userManager.GetUserAsync(User).Result;
+                var shippingAddress = _userRepository.GetShippingAddress(user.Id);
+                _userDetailsComposition.SaveShippingAddress(shippingAddress,model,user);
+                return RedirectToAction("ViewAccount");
+            }
+            return View(model);
+        }
+
+        public IActionResult EditPaymentDetails()
+        {
+            if(_signInManager.IsSignedIn(User))
+            {
+                var user = _userManager.GetUserAsync(User).Result;
+                var cardInfo = _userRepository.GetCardInformation(user.Id);
+
+                if(cardInfo is null)
+                {
+                    cardInfo = new CardInformation();
+                    cardInfo.BillingAddress = new BillingAddress();
+                }
+                var model = new CardModel()
+                {
+                    NameOnCard = cardInfo.NameOnCard,
+                    CVV = cardInfo.CVV,
+                    CardNumber  = cardInfo.CardNumber,
+                    BillingAddress = new AddressModel()
+                    
+                };
+                model.BillingAddress.Addressline1 = cardInfo.BillingAddress.Addressline1;
+                model.BillingAddress.Addressline2 = cardInfo.BillingAddress.Addressline2;
+                model.BillingAddress.Addressline3 = cardInfo.BillingAddress.Addressline3;
+                model.BillingAddress.State = cardInfo.BillingAddress.State;
+                model.BillingAddress.Zipcode = cardInfo.BillingAddress.Zipcode;
+                model.BillingAddress.Country = cardInfo.BillingAddress.Country;
+
+                return View(model);
+            }
+            return RedirectToAction("Login");
+        }
+
+        [HttpPost]
+        public IActionResult EditPaymentDetails(CardModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var user = _userManager.GetUserAsync(User).Result;
+                var paymentCard = _userRepository.GetPaymentDetails(user.Id);
+                paymentCard = _userDetailsComposition.SavePaymentCard(paymentCard,model,user);
+
+                var cardInfo = _userRepository.GetCardInformation(user.Id);
+                _userDetailsComposition.SaveCardDetails(cardInfo, paymentCard,user);
+                
+                return RedirectToAction("ViewAccount");
+            }
+            return View(model);
+        }
+
+
+    }
+}

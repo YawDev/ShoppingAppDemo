@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "Shoppng Cart";
+    decimal total =0;
+}
+@using Shopper.App.Models;
+@model ShoppingCartModel;
+
+<h1>Shopping Cart</h1>
+
+
+@if(!(Model.Items.Count() == 0))
+{
+  <table class="table">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Image</th>
+            <th scope="col"></th>
+      <th scope="col"></th>
+
+
+    </tr>
+  </thead>
+  <tbody>
+
+    @foreach (var cartItem in Model.Items)
+    {
+    <tr>
+      <td>@cartItem.ItemListing.Name</td>
+      <td>$@cartItem.ItemListing.Price</td>
+      <td>@cartItem.QuantityInCart</td>
+       <td><img src="@("~/Images/"+cartItem.ItemListing.FileName)" asp-append-version="true" width="110px" height="80px" /></td>
+      <td>
+            <a class="btn btn-danger btn-sm" 
+                      asp-controller="ShoppingCart"
+                      asp-action="RemoveFromCart"
+                      asp-route-id="@cartItem.ItemListing.Id"> Remove </a>
+           </td>
+
+        <td>
+            <a class="btn btn-primary btn-sm" 
+                      asp-controller="ShoppingCart"
+                      asp-action="AddToCart"
+                      asp-route-id="@cartItem.ItemListing.Id"> Add </a>
+           </td>
+      
+
+    </tr>
+        }
+  </tbody>
+</table>
+<br>
+<p>
+
+  @foreach (var item in Model.Items)
+  {
+    total += item.ItemListing.Price*item.QuantityInCart;
+  }
+  Total: $@total
+</p>
+<br>
+
+<a class="btn btn-primary btn-sm" 
+                      asp-controller="Order"
+                      asp-action="PlaceOrder"> Check Out </a>
+}
+else
+{
+  <p>No items are available.</p>
+}

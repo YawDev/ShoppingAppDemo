@@ -1,0 +1,95 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+@using Microsoft.AspNetCore.Identity
+@using Shopper.App.Models;
+@model IEnumerable<ItemModel>;
+@inject SignInManager<ApplicationUser> SignInManager
+@using ShoppingDemo.App.Data.Entites;
+
+
+
+<h1>Browse Items</h1>
+
+
+@if(!(Model.Count() == 0))
+{
+  <table class="table">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">Description</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">In Stock</th>
+      <th scope="col">Image</th>
+            <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+
+
+
+
+
+    </tr>
+  </thead>
+  <tbody>
+
+         @foreach (var item in Model)
+        {
+    <tr>
+      <td>@item.Name</td>
+      <td>$@item.Price</td>
+      <td>@item.Description</td>
+      <td>@item.Quantity</td>
+      <td>
+          @if(item.inStock)
+          {
+              <p>In Stock</p>
+          }
+          else
+          {
+              <p>Out Of Stock</p>
+          }
+          
+          
+          </td>
+                <td><img src="@("~/Images/"+item.FileName)" asp-append-version="true" width="110px" height="80px" /></td>
+
+      <td>
+            <a class="btn btn-danger btn-sm" 
+                      asp-controller="Item"
+                      asp-action="Delete"
+                      asp-route-id="@item.Id"> Delete </a>
+           </td>
+
+        <td>
+            <a class="btn btn-primary btn-sm" 
+                      asp-controller="Item"
+                      asp-action="Edit"
+                      asp-route-id="@item.Id"> Edit </a>
+           </td>
+           @if (SignInManager.IsSignedIn(User))
+            {
+                <td>
+                  @if(item.inStock)
+                  {
+                <a class="btn btn-primary btn-sm" 
+                      asp-controller="ShoppingCart"
+                      asp-action="AddToCart"
+                      asp-route-id="@item.Id"> Add To Cart </a>
+                  }
+                 
+           </td>
+            }
+      
+
+    </tr>
+        }
+  </tbody>
+</table>
+}
+else
+{
+  <p>No items are available.</p>
+}

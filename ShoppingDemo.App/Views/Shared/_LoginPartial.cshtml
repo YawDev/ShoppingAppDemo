@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ShoppingDemo.App.Data.Entites;
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager 
+@{
+
+    var user = UserManager.GetUserAsync(User).Result;
+}
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+  <li class="nav-item">
+         <a class="nav-link text-dark" asp-controller="Identity" asp-action="ViewAccount">Welcome, @user.Email </a>
+    </li>
+    <li class="nav-item">
+         <a class="nav-link text-dark" asp-controller="ShoppingCart" asp-action="ViewCart">View Cart</a>
+    </li>
+    
+    <li class="nav-item">
+         <a class="nav-link text-dark" asp-controller="Identity" asp-action="Logout">Log Out</a>
+    </li>
+} 
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-controller="Identity" asp-action="Register">Register</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-controller="Identity" asp-action="Login">Login</a>
+    </li>
+}
+
+</ul>

@@ -1,0 +1,26 @@
+
+@using Shopper.App.Models;
+@model ItemModel
+@{
+    ViewData["Title"] = "Add to Cart?";
+}
+
+<h1>Add @Model.Name to Cart?</h1>
+
+<img src="@("~/Images/"+Model.FileName)" asp-append-version="true" width="200px" height="150px" />
+<br></br>
+
+
+     <form method="post">
+                <div class="form-group">
+                   <input type="submit" value="AddToCart"  class="btn btn-success"/>
+                </div>
+                <div>
+       <a class="btn btn-secondary btn-sm" 
+                      asp-controller="ShoppingCart"
+                      asp-action="ViewCart"> Cancel </a>
+                </div>
+            
+
+                
+            </form>

@@ -1,0 +1,184 @@
+
+@using Shopper.App.Models;
+@model PlaceOrderModel
+@{
+    ViewData["Title"] = "Place Order";
+}
+
+
+<br>
+<p>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <form class="form-horizontal" asp-action="PlaceOrder" method="post">
+                 <div class="form-group">
+                    <h3>Contact Information</h3>
+
+                   <label class="control-label">First Name</label>
+                    <input asp-for="@Model.FirstName"  class="form-control"type="text" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                   <label class="control-label">Last Name</label>
+                    <input asp-for="@Model.LastName"  class="form-control"type="text" />
+                    <span asp-validation-for="@Model.LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                   <label class="control-label">Email</label>
+                    <input asp-for="@Model.Email"  class="form-control"type="text" />
+                    <span asp-validation-for="@Model.Email" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">Phone</label>
+                    <input asp-for="@Model.Phone"  class="form-control"type="text" />
+                    <span asp-validation-for="@Model.Phone" class="text-danger"></span>                
+                    </div>
+
+                <br>
+                 
+                <h3>Payment Details</h3>
+                <br>
+                 
+                 
+                    <div class="form-group">
+                   <label class="control-label">Name on Card</label>
+                    <input asp-for="Payment.NameOnCard"  class="form-control"type="text" />
+                    <span asp-validation-for="Payment.NameOnCard" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                   <label class="control-label">Card Number</label>
+                    <input asp-for="Payment.CardNumber"  class="form-control"type="text" />
+                    <span asp-validation-for="Payment.CardNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                   <label class="control-label">CVV/CV2</label>
+                    <input asp-for="Payment.CVV"  class="form-control"type="text" />
+                    <span asp-validation-for="Payment.CVV" class="text-danger"></span>
+                </div>
+                <br>
+                <label class="control-label">Use Existing Card </label>
+                    @Html.CheckBoxFor(m => m.Payment.UseExistingCard)
+                    </br>
+                    <br>
+                    <br>
+                  <h4>Billing Address</h4>
+
+                
+<br>
+                     <div class="form-group">
+                   <label class="control-label">AddressLine 1</label>
+                    <input asp-for="Payment.BillingAddress.Addressline1"  class="form-control"type="text" />
+                    <span asp-validation-for="Payment.BillingAddress.Addressline1" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 2</label>
+                    <input asp-for="Payment.BillingAddress.Addressline2"  class="form-control"type="text" />
+                    <span asp-validation-for="Payment.BillingAddress.Addressline2" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 3</label>
+                    <input asp-for="Payment.BillingAddress.Addressline3"  class="form-control"type="text" />
+                    <span asp-validation-for="Payment.BillingAddress.Addressline3" class="text-danger"></span>
+                </div>
+
+             <div class="form-group">
+                   <label class="control-label">State</label>
+                    <input asp-for="Payment.BillingAddress.State"  class="form-control"type="text" />
+                    <span asp-validation-for="Payment.BillingAddress.State" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">Zip Code</label>
+                    <input asp-for="Payment.BillingAddress.Zipcode"  class="form-control"type="text" />
+                    <span asp-validation-for="Payment.BillingAddress.Zipcode" class="text-danger"></span>
+                </div>
+<br>
+ <label class="control-label">Use Existing Address for Billing</label>
+                    @Html.CheckBoxFor(m => m.Payment.BillingAddress.UseExistingAddress)
+                    <br></br>
+                    <br>
+                    
+                <h4>Delivery Address</h4>
+
+                 <br>
+
+                     <div class="form-group">
+                   <label class="control-label">AddressLine 1</label>
+                    <input asp-for="ShippingAddress.Addressline1"  class="form-control"type="text" />
+                    <span asp-validation-for="ShippingAddress.Addressline1" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 2</label>
+                    <input asp-for="Payment.BillingAddress.Addressline2"  class="form-control"type="text" />
+                    <span asp-validation-for="ShippingAddress.Addressline2" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 3</label>
+                    <input asp-for="ShippingAddress.Addressline3"  class="form-control"type="text" />
+                    <span asp-validation-for="ShippingAddress.Addressline3" class="text-danger"></span>
+                </div>
+
+             <div class="form-group">
+                   <label class="control-label">State</label>
+                    <input asp-for="ShippingAddress.State"  class="form-control"type="text" />
+                    <span asp-validation-for="ShippingAddress.State" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">Zip Code</label>
+                    <input asp-for="ShippingAddress.Zipcode"  class="form-control"type="text" />
+                    <span asp-validation-for="ShippingAddress.Zipcode" class="text-danger"></span>
+                </div>
+                <br>
+   <label class="control-label">Use Existing Address for Shipping</label>
+                    @Html.CheckBoxFor(m => m.ShippingAddress.UseExistingAddress)
+                    <br>
+             </br>
+
+
+<br></br>
+   <div class="form-group">
+                   <input type="submit" value="Place Order"  class="btn btn-primary"/>
+                </div>
+            </form>
+            </div>
+        <div class="col-sm-4"></div>
+    </div>
+
+    <br>
+    <table class="table">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Image</th>
+          
+      <th scope="col"></th>
+
+
+    </tr>
+  </thead>
+  <tbody>
+
+    @foreach (var orderItem in Model.Items)
+    {
+    <tr>
+      <td>@orderItem.ItemListing.Name</td>
+      <td>$@orderItem.ItemListing.Price</td>
+      <td>@orderItem.QuantityInCart</td>
+       <td><img src="@("~/Images/"+orderItem.ItemListing.FileName)" asp-append-version="true" width="110px" height="80px" /></td>
+    
+      
+
+    </tr>
+        }
+  </tbody>
+</table>
+<p>Total: $@Model.Total</p>

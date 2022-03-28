@@ -1,0 +1,42 @@
+@{
+    ViewData["Title"] = "Edit Address";
+}
+@using Shopper.App.Models;
+@model AddressModel
+
+    <h4>Delivery Address</h4>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <form class="form-horizontal" asp-action="EditAddress" method="post">
+
+                     <div class="form-group">
+                   <label class="control-label">AddressLine 1</label>
+                    <input asp-for="Addressline1"  class="form-control"type="text" />
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 2</label>
+                    <input asp-for="Addressline2"  class="form-control"type="text" />
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 3</label>
+                    <input asp-for="Addressline3"  class="form-control"type="text" />
+                </div>
+
+             <div class="form-group">
+                   <label class="control-label">State</label>
+                    <input asp-for="State"  class="form-control"type="text" />
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">Zip Code</label>
+                    <input asp-for="Zipcode"  class="form-control"type="text" />
+                </div>
+
+                <div class="form-group">
+                   <input type="submit" value="Save Changes" class="btn btn-primary"/>
+                </div>
+                </form>

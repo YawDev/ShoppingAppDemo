@@ -1,0 +1,54 @@
+
+@using Shopper.App.Models;
+@model EditItemModel
+@{
+    ViewData["Title"] = "Edit Item";
+}
+       <img src="@("~/Images/"+Model.FileName)" asp-append-version="true" width="120px" height="100px" />
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4"></div>
+<br></br>
+         <form enctype="multipart/form-data" method="post">
+        <dl>
+        <dt>
+            <label asp-for="@Model.imageFile">Upload File</label>
+        </dt>
+        <dd>
+            <input asp-for="@Model.imageFile" type="file">
+            <span asp-validation-for="@Model.imageFile"></span>
+        </dd>
+    </dl>
+                <div class="form-group">
+                   <label class="control-label">Item Name</label>
+                    <input asp-for="Name"  class="form-control"type="text" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">Price</label>
+                    <input asp-for="Price"  class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+
+                </div>
+                   <textarea asp-for="Description">Description</textarea>
+
+                 <div class="form-group">
+                    <label class="control-label">Quantity</label>
+                    <input asp-for="Quantity" class="form-control"  />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
+
+                </div>
+                <label class="control-label">In Stock</label>
+                    @Html.CheckBoxFor(m => m.inStock)
+                    </br>
+          
+                <div class="form-group">
+                   <input type="submit" value="Submit"  class="btn btn-primary"/>
+                </div>
+            </form>
+        <div class="col-sm-4"></div>
+    </div>
+</div>

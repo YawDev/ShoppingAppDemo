@@ -1,0 +1,111 @@
+@{
+    ViewData["Title"] = "View Account";
+}
+@using Shopper.App.Models;
+@model AccountModel;
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <form class="form-horizontal" asp-action="PlaceOrder" method="post">
+                 <div class="form-group">
+                    <h3>Contact Information</h3>
+
+                   
+                <div class="form-group">
+                   <label class="control-label">Email</label>
+                    <input asp-for="@Model.Email"  class="form-control"type="text" readonly/>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">Username</label>
+                    <input asp-for="@Model.Username"  class="form-control"type="text" readonly/>
+                    </div>
+
+                 
+                <h3>Payment Details</h3>
+                 
+                 
+                    <div class="form-group">
+                   <label class="control-label">Name on Card</label>
+                    <input asp-for="@Model.CardInfo.NameOnCard"  class="form-control"type="text" readonly/>
+                </div>
+                <div class="form-group">
+                   <label class="control-label">Card Number</label>
+                    <input asp-for="@Model.CardInfo.CardNumber"  class="form-control"type="text" readonly/>
+                </div>
+                <div class="form-group">
+                   <label class="control-label">CVV/CV2</label>
+                    <input asp-for="@Model.CardInfo.CVV"  class="form-control"type="text" readonly/>
+                </div>
+               
+                  <h4>Billing Address</h4>
+
+                
+                     <div class="form-group">
+                   <label class="control-label">AddressLine 1</label>
+                    <input asp-for="CardInfo.BillingAddress.Addressline1"  class="form-control"type="text" readonly/>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 2</label>
+                    <input asp-for="CardInfo.BillingAddress.Addressline2"  class="form-control"type="text" readonly/>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 3</label>
+                    <input asp-for="CardInfo.BillingAddress.Addressline3"  class="form-control"type="text" readonly/>
+                </div>
+
+             <div class="form-group">
+                   <label class="control-label">State</label>
+                    <input asp-for="CardInfo.BillingAddress.State"  class="form-control"type="text" readonly/>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">Zip Code</label>
+                    <input asp-for="CardInfo.BillingAddress.Zipcode"  class="form-control"type="text" readonly/>
+                </div>
+
+                <br>
+                       <a class="btn btn-secondary btn-sm" 
+                      asp-controller="Identity"
+                      asp-action="EditPaymentDetails"> Edit Payment Card </a>
+                </div></br>
+
+                    
+                <h4>Delivery Address</h4>
+
+
+                     <div class="form-group">
+                   <label class="control-label">AddressLine 1</label>
+                    <input asp-for="Address.Addressline1"  class="form-control"type="text" readonly/>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 2</label>
+                    <input asp-for="Address.Addressline2"  class="form-control"type="text" readonly/>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 3</label>
+                    <input asp-for="Address.Addressline3"  class="form-control"type="text" readonly/>
+                </div>
+
+             <div class="form-group">
+                   <label class="control-label">State</label>
+                    <input asp-for="Address.State"  class="form-control"type="text" readonly/>
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">Zip Code</label>
+                    <input asp-for="Address.Zipcode"  class="form-control"type="text" readonly/>
+                </div>
+
+                <br>
+                       <a class="btn btn-secondary btn-sm" 
+                      asp-controller="Identity"
+                      asp-action="EditAddress"> Edit Delivery Address </a>
+                </br>
+
+</form>

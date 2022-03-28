@@ -1,0 +1,26 @@
+
+@using Shopper.App.Models;
+@model ItemModel
+@{
+    ViewData["Title"] = "Remove from Cart?";
+}
+
+<h1>Remove @Model.Name from Cart?</h1>
+
+<img src="@("~/Images/"+Model.FileName)" asp-append-version="true" width="200px" height="150px" />
+<br></br>
+
+
+     <form method="post">
+                <div class="form-group">
+                   <input type="submit" value="Confirm"  class="btn btn-danger"/>
+                </div>
+                
+           <div>
+       <a class="btn btn-secondary btn-sm" 
+                      asp-controller="ShoppingCart"
+                      asp-action="ViewCart"> Cancel </a>
+                </div>
+                
+            </form>
+   

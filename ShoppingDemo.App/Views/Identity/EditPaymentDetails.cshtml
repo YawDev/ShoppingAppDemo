@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Edit Payment";
+}
+@using Shopper.App.Models;
+@model CardModel
+
+    <h4>Payment Details</h4>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <form class="form-horizontal" asp-action="EditPaymentDetails" method="post">
+
+                     <div class="form-group">
+                   <label class="control-label">Name On Card</label>
+                    <input asp-for="NameOnCard"  class="form-control"type="text" />
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">Card Number</label>
+                    <input asp-for="CardNumber"  class="form-control"type="text" />
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">CVV/CV2</label>
+                    <input asp-for="CVV"  class="form-control"type="text" />
+                </div>
+
+                     <div class="form-group">
+                   <label class="control-label">AddressLine 1</label>
+                    <input asp-for="BillingAddress.Addressline1"  class="form-control"type="text" />
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 2</label>
+                    <input asp-for="BillingAddress.Addressline2"  class="form-control"type="text" />
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">AddressLine 3</label>
+                    <input asp-for="BillingAddress.Addressline3"  class="form-control"type="text" />
+                </div>
+
+             <div class="form-group">
+                   <label class="control-label">State</label>
+                    <input asp-for="BillingAddress.State"  class="form-control"type="text" />
+                </div>
+
+                 <div class="form-group">
+                   <label class="control-label">Zip Code</label>
+                    <input asp-for="BillingAddress.Zipcode"  class="form-control"type="text" />
+                </div>
+
+                <div class="form-group">
+                   <input type="submit" value="Save Changes" class="btn btn-primary"/>
+                </div>
+                </form>
