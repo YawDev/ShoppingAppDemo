@@ -33,13 +33,18 @@
                     <span asp-validation-for="@Model.Email" class="text-danger"></span>
                 </div>
 
-                 <div class="form-group">
+                 @* <div class="form-group">
                    <label class="control-label">Phone</label>
                     <input asp-for="@Model.Phone"  class="form-control"type="text" />
                     <span asp-validation-for="@Model.Phone" class="text-danger"></span>                
-                    </div>
+                    </div> *@
 
                 <br>
+                 <label class="control-label">Use Saved Contact Info </label>
+                    @Html.CheckBoxFor(m => m.UseExistingContactInfo)
+                    </br>
+                    <br>
+                    <br>
                  
                 <h3>Payment Details</h3>
                 <br>
