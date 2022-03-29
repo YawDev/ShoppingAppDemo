@@ -14,7 +14,7 @@ namespace ShoppingDemo.App.Services
     {
          void ProcessOrder(PlaceOrderModel model,Order order, ApplicationUser user);
 
-         string GetModelErrors();
+         string GetErrorMessage();
 
          void SaveOrder(PlaceOrderModel model, Order order,string userId);
 
@@ -23,6 +23,8 @@ namespace ShoppingDemo.App.Services
          List<OrderModel> GetOrders(string userId);
 
          OrderModel GetOrderDetails(Guid Id);
+
+         Dictionary<string,string> GetModelErrors();
     }
 
     public class CustomerComposition : ICustomerComposition
@@ -52,9 +54,9 @@ namespace ShoppingDemo.App.Services
             return orderModel;
         }
 
-        public string GetModelErrors()
+        public string GetErrorMessage()
         {
-            var errors = _orderService.GetErrors();
+            var errors = GetModelErrors();
             if(errors.Count > 0)
             {
                 var sb = new StringBuilder();
@@ -66,6 +68,11 @@ namespace ShoppingDemo.App.Services
                 return sb.ToString();
             }
             return null;
+        }
+
+        public Dictionary<string,string> GetModelErrors()
+        {
+            return _orderService.GetErrors();
         }
 
         public void ProcessOrder(PlaceOrderModel model, Order order,ApplicationUser user)
