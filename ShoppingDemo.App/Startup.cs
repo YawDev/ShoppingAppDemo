@@ -50,9 +50,7 @@ namespace ShoppingAppDemo
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserDetailsComposition, UserDetailsComposition>();
-
-
-
+            services.AddScoped<ICustomerComposition, CustomerComposition>();
 
         }
 
