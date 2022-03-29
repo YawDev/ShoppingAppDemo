@@ -16,21 +16,22 @@ namespace ShoppingDemo.App.Controllers
 {
     public class OrderController :  Controller
     {
-       
-        public OrderController(ILogger<OrderController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, 
-        IOrderRepository orderRepository,ICryptoService cryptoService,IShoppingCartRepository shoppingCartRepository,IOrderService orderService,
-        IUserRepository userRepository)
+
+        private readonly ILogger<OrderController> _logger;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        ICustomerComposition _customerComposition;
+        IOrderService _orderService;
+        IMapper _mapper;
+
+        public OrderController(ILogger<OrderController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ICustomerComposition customerComposition, IOrderService orderService)
         {
             _logger = logger;
             _signInManager = signInManager;
             _userManager = userManager;
-            _orderRepository = orderRepository;
-            _cryptoService = cryptoService;
-            _shoppingCartRepository = shoppingCartRepository;
+            _customerComposition = customerComposition;
             _orderService = orderService;
-            _userRepository = userRepository;
             _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
-
         }
 
         public IActionResult ViewOrders()
@@ -38,9 +39,7 @@ namespace ShoppingDemo.App.Controllers
             if(_signInManager.IsSignedIn(User))
             {
                 var user = _userManager.GetUserAsync(User).Result;
-                var Orders = _orderRepository.GetOrdersByUserId(user.Id);
-                var model = _mapper.Map<List<OrderModel>>(Orders);
-                return View(model);
+                return View(_customerComposition.GetOrders(user.Id));
             }
             return RedirectToAction("Login");
         }
@@ -49,12 +48,10 @@ namespace ShoppingDemo.App.Controllers
         public IActionResult ViewOrderDetail(Guid Id)
         {
             if(_signInManager.IsSignedIn(User))
-            {
-                var order = _orderRepository.GetById(Id);
-                var model = _mapper.Map<OrderModel>(order);
-                return View(model);
-            }
-            return RedirectToAction("Login");        }
+                return View(_customerComposition.GetOrderDetails(Id));
+            
+            return RedirectToAction("Login");      
+        }
 
 
         public IActionResult PlaceOrder()
@@ -62,10 +59,7 @@ namespace ShoppingDemo.App.Controllers
             if(_signInManager.IsSignedIn(User))
             {
                 var user = _userManager.GetUserAsync(User).Result;
-                var cart = _shoppingCartRepository.GetByUserId(user.Id);
-                var order = _orderService.PrepareOrder(_mapper.Map<ShoppingCartModel>(cart));
-                var orderModel = _mapper.Map<PlaceOrderModel>(order);
-                return View(orderModel);
+                return View(_customerComposition.MapOrderForm(user.Id));
             }
             return RedirectToAction("Login");
         }
@@ -76,71 +70,25 @@ namespace ShoppingDemo.App.Controllers
             var user =_userManager.GetUserAsync(User).Result;
             var order = _mapper.Map<Order>(model);
 
-            if(model.UseExistingContactInfo)
-                _orderService.UseExistingContactInfo(user, order, model);
-            else
-                _orderService.NoContactProvided(model);
-                
             if(ModelState.IsValid)
             {
-                if(model.Payment.UseExistingCard)
-                {
-                    var card = _userRepository.GetPaymentDetails(_userManager.GetUserId(User));
-
-
-                    
-                    var billingAddress = _userRepository.GetBillingAddress(_userManager.GetUserId(User));
-
-                    if(!_orderService.MissingCardBilling(billingAddress, card))
-                    {   
-                        _orderService.UseExistingCard(card,order);
-                        _orderService.UseExistingBillingAddress(billingAddress,order);
-                    }
-                }
-
-                if(model.ShippingAddress.UseExistingAddress )
-                {
-                    var shippingAddress = _userRepository.GetShippingAddress(_userManager.GetUserId(User));
-
-                    if(!_orderService.MissingShippingAddress(shippingAddress))
-                        _orderService.UseExistingShippingAddress(shippingAddress,order);
-                }
-
+                
+                _customerComposition.ProcessOrder(model,order,user);
                 var errors = _orderService.GetErrors();
                 if(errors.Count > 0)
                 {
-                    var sb = new StringBuilder();
-                    foreach(var error in errors)
-                    {
-                        sb.AppendLine(error.Value+",");
-                        sb.AppendLine("\n");
-                    }
-                    ViewBag.Message = sb.ToString();
+                    ViewBag.Message = _customerComposition.GetModelErrors();
                     return View(model);
                 }
 
-            
-                order.UserId = user.Id;
-                order.Items = _mapper.Map<List<OrderItem>>(model.Items);
-                order.Total = order.Items.Sum(x => x.ItemListing.Price * x.QuantityInCart); 
-                _orderService.MapModelToOrder(model, order);
-                _orderRepository.Add(order);
-                _orderRepository.Commit();
-                
+                _customerComposition.SaveOrder(model,order,user.Id);
                 return RedirectToAction("Index","Home");
             }
             return View(model);
         }
 
 
-        private readonly ILogger<OrderController> _logger;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IOrderRepository _orderRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IShoppingCartRepository _shoppingCartRepository;
-        private readonly ICryptoService _cryptoService;
-        private readonly IOrderService _orderService;
-        private readonly IMapper _mapper;
+     
+    
     }
 }
