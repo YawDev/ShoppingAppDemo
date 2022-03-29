@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Shopper.App.Models;
 using ShoppingDemo.App.Data.Entites;
 using ShoppingDemo.App.Mapping;
+using ShoppingDemo.App.Services;
 using ShoppingDemo.EFCore;
 
 namespace ShoppingDemo.App.Controllers
@@ -21,6 +22,8 @@ namespace ShoppingDemo.App.Controllers
         private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly IItemRepository _itemRepository;
         private readonly IShoppingCartItemRepository _shoppingCartItemRepository;
+
+        ICustomerComposition _customerComposition;
 
         IMapper _mapper;
 
@@ -41,18 +44,7 @@ namespace ShoppingDemo.App.Controllers
             if(_signInManager.IsSignedIn(User))
             {
                 var user = _userManager.GetUserAsync(User).Result;
-                var cart = _shoppingCartRepository.GetByUserId(user.Id);
-                if(cart is null)
-                {
-                    cart = new ShoppingCart();
-                    cart.Items = new List<ShoppingCartItem>();
-                    cart.User = user;
-                    _shoppingCartRepository.Add(cart);
-                    _shoppingCartRepository.Commit();
-                }
-                var model = _mapper.Map<ShoppingCartModel>(cart);
-                model.Total = cart.Items.Sum(x => x.ItemListing.Price* x.QuantityInCart);
-                return View(model);
+                return View(_customerComposition.GetShoppingCart(user));
             }
             return RedirectToAction("Login","Identity");
         }

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Shopper.App.Models;
 using ShoppingDemo.App.Data.Entites;
 using ShoppingDemo.App.Mapping;
+using ShoppingDemo.App.Services;
 using ShoppingDemo.EFCore;
 
 namespace ShoppingDemo.App.Controllers
@@ -19,27 +20,16 @@ namespace ShoppingDemo.App.Controllers
     {
         private readonly ILogger<ItemController> _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IItemRepository _itemRepository;
-        private readonly IShoppingCartItemRepository _shoppingCartItemRepository;
-        private readonly IWebHostEnvironment _webHostEnv;
         IMapper _mapper {get;set;}
+        IItemService _itemService;
 
-
-
-        public ItemController(ILogger<ItemController> logger, SignInManager<ApplicationUser> signInManager,  UserManager<ApplicationUser> userManager,
-        IItemRepository itemRepository,IShoppingCartItemRepository shoppingCartItemRepository,IWebHostEnvironment webHostEnv)
+        public ItemController(ILogger<ItemController> logger, SignInManager<ApplicationUser> signInManager, IMapper mapper, IItemService itemService)
         {
             _logger = logger;
-            _userManager = userManager;
             _signInManager = signInManager;
-            _itemRepository = itemRepository;
-            _webHostEnv = webHostEnv;
-            _shoppingCartItemRepository = shoppingCartItemRepository;
-            _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
-
+            _mapper = mapper;
+            _itemService = itemService;
         }
-
 
         public IActionResult Add()
         {
@@ -53,22 +43,7 @@ namespace ShoppingDemo.App.Controllers
             {
                 if(ModelState.IsValid)
                 {
-                    var item =  new Item
-                    {
-                        Name = model.Name,
-                        Price = model.Price,
-                        Description = model.Description,
-                        Quantity = model.Quantity,
-                        inStock = model.inStock,
-                    }; 
-
-                    if(model.imageFile?.Length > 0)
-                    {
-                       item.Image = ToByteArray(model.imageFile);
-                       item.FileName = Upload(model.imageFile);
-                    } 
-                    _itemRepository.Add(item);
-                    _itemRepository.Commit();
+                    _itemService.CreateItem(model);
                     return RedirectToAction("Index","Home");
                 }
                 return View(model);
@@ -84,7 +59,7 @@ namespace ShoppingDemo.App.Controllers
 
         public IActionResult Delete(Guid Id)
         {
-            var item = _itemRepository.GetById(Id);
+            var item = _itemService.FindItem(Id);
             if(item is null)
                 return RedirectToAction("Not Found");
             return View(item);
@@ -93,10 +68,7 @@ namespace ShoppingDemo.App.Controllers
         [HttpPost]
         public IActionResult Delete(Item item)
         {
-            var cartItems = _shoppingCartItemRepository.GetAllByItemId(item.Id);
-            _shoppingCartItemRepository.DeleteRange(cartItems);
-           _itemRepository.Delete(item);
-            _shoppingCartItemRepository.Commit();
+            _itemService.DeleteItem(item);
             return RedirectToAction("Index","Home");
          
         }
@@ -104,7 +76,7 @@ namespace ShoppingDemo.App.Controllers
 
         public IActionResult Edit(Guid Id)
         {
-            var item = _itemRepository.GetById(Id);
+            var item = _itemService.FindItem(Id);
             if(item is null)
                 return RedirectToAction("ResourceNotFound");
             
@@ -114,54 +86,16 @@ namespace ShoppingDemo.App.Controllers
         [HttpPost]
         public IActionResult Edit(EditItemModel model)
         {
-            var item = _itemRepository.GetById(model.Id);
-            item.Name = model.Name;
-            item.Price = model.Price;
-            item.Quantity = model.Quantity;
-            item.inStock = model.inStock;
-            item.Description = model.Description;
-
-            if(model.imageFile?.Length > 0)
-            {
-                item.Image = ToByteArray(model.imageFile);
-                item.FileName = Upload(model.imageFile);
-            }
-            
-            _itemRepository.Commit();
+            _itemService.EditItem(model);
             return RedirectToAction("Index","Home");
          
         }
 
-        public string Upload(IFormFile file )
-        {
-            var filePath = Path.Combine(_webHostEnv.WebRootPath+"/images", file.FileName);
-            SaveImage(file, filePath);
-            return file.FileName;
-        }
-
-
-        public void SaveImage(IFormFile file, string path)
-        {
-            using(var stream = new FileStream(path, FileMode.Create))
-            {
-                file.CopyTo(stream);
-            }
-
-        }
 
         public IActionResult ResourceNotFound()
         {
             return View();
         }
 
-
-        public byte[] ToByteArray(IFormFile file)
-        {
-            using(var memoryStream = new MemoryStream())
-            {
-                file.CopyTo(memoryStream);
-                return memoryStream.ToArray();
-            }
-        }
     }
 }

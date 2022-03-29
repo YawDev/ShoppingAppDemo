@@ -25,6 +25,9 @@ namespace ShoppingDemo.App.Services
          OrderModel GetOrderDetails(Guid Id);
 
          Dictionary<string,string> GetModelErrors();
+
+         ShoppingCartModel GetShoppingCart(ApplicationUser user);
+   
     }
 
     public class CustomerComposition : ICustomerComposition
@@ -134,5 +137,21 @@ namespace ShoppingDemo.App.Services
                 _orderRepository.Add(order);
                 _orderRepository.Commit();
         }
+
+        public ShoppingCartModel GetShoppingCart(ApplicationUser user)
+         {
+             var cart = _shoppingCartRepository.GetByUserId(user.Id);
+                if(cart is null)
+                {
+                    cart = new ShoppingCart();
+                    cart.Items = new List<ShoppingCartItem>();
+                    cart.User = user;
+                    _shoppingCartRepository.Add(cart);
+                    _shoppingCartRepository.Commit();
+                }
+                var model = _mapper.Map<ShoppingCartModel>(cart);
+                model.Total = cart.Items.Sum(x => x.ItemListing.Price* x.QuantityInCart);
+                return model;
+         }
     }
 }
