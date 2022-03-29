@@ -64,9 +64,7 @@ namespace ShoppingDemo.App.Controllers
                 var user = _userManager.GetUserAsync(User).Result;
                 var cart = _shoppingCartRepository.GetByUserId(user.Id);
                 var order = _orderService.PrepareOrder(_mapper.Map<ShoppingCartModel>(cart));
-                order.Total = order.Items.Sum(x => x.ItemListing.Price * x.QuantityInCart); 
                 var orderModel = _mapper.Map<PlaceOrderModel>(order);
-
                 return View(orderModel);
             }
             return RedirectToAction("Login");
@@ -75,9 +73,16 @@ namespace ShoppingDemo.App.Controllers
         [HttpPost]
         public IActionResult PlaceOrder(PlaceOrderModel model)
         {
+            var user =_userManager.GetUserAsync(User).Result;
+            var order = _mapper.Map<Order>(model);
+
+            if(model.UseExistingContactInfo)
+                _orderService.UseExistingContactInfo(user, order, model);
+            else
+                _orderService.NoContactProvided(model);
+                
             if(ModelState.IsValid)
             {
-                var order = _mapper.Map<Order>(model);
                 if(model.Payment.UseExistingCard)
                 {
                     var card = _userRepository.GetPaymentDetails(_userManager.GetUserId(User));
@@ -113,14 +118,8 @@ namespace ShoppingDemo.App.Controllers
                     ViewBag.Message = sb.ToString();
                     return View(model);
                 }
-                var user =_userManager.GetUserAsync(User).Result;
-                order.Customer = new Customer
-                {
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                };
 
+            
                 order.UserId = user.Id;
                 order.Items = _mapper.Map<List<OrderItem>>(model.Items);
                 order.Total = order.Items.Sum(x => x.ItemListing.Price * x.QuantityInCart); 

@@ -16,16 +16,10 @@ namespace Shopper.App.Models
 
         public List<OrderItemModel> Items {get;set;}
 
-        [Required]
         public string FirstName { get; set; }
-
-        [Required]
         public string LastName { get; set; }
-
-        [Required]
         public string Email { get; set; }
 
-        [Required]
         public string Phone { get; set; }
 
         public AddressModel ShippingAddress { get; set; }
@@ -36,6 +30,7 @@ namespace Shopper.App.Models
 
     public class PlaceOrderModel : OrderModel
     {
+        public bool UseExistingContactInfo { get; set; }
     }
 
     public class OrderItemModel

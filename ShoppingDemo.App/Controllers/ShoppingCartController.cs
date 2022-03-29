@@ -88,6 +88,7 @@ namespace ShoppingDemo.App.Controllers
             {
                 var existingItem = cart.Items.FirstOrDefault(x => x.ItemListing.Id == model.Id);
                 existingItem.QuantityInCart++;
+                cart.Total = cart.Items.Sum(x => x.ItemListing.Price* x.QuantityInCart);
                 _shoppingCartRepository.Commit();
                 return RedirectToAction("ViewCart");
             }

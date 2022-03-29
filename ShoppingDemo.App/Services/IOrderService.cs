@@ -10,6 +10,9 @@ namespace ShoppingDemo.App.Services
     {
         OrderModel PrepareOrder(ShoppingCartModel cart);
         Order MapModelToOrder(PlaceOrderModel orderModel, Order order);
+        void NoContactProvided(PlaceOrderModel orderModel);
+
+        void UseExistingContactInfo(ApplicationUser user, Order order, OrderModel model);
 
         void UseExistingCard(PaymentCard card, Order order);
         void UseExistingShippingAddress(ShippingAddress address, Order order);
@@ -162,12 +165,48 @@ namespace ShoppingDemo.App.Services
                 order.ShippingAddress.State = orderModel.ShippingAddress.State;
             }
 
+            if(!orderModel.UseExistingContactInfo)
+            {
+                order.Customer = new Customer
+                {
+                    FirstName = orderModel.FirstName,
+                    LastName = orderModel.LastName,
+                    Email = orderModel.Email,
+                };
+            }
+
             return order;
         }
 
         public Dictionary<string, string> GetErrors()
         {
             return Errors;
+        }
+
+        public void UseExistingContactInfo(ApplicationUser user, Order order, OrderModel model)
+        {
+            order.Customer = new Customer
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+            };
+
+            model.FirstName = order.Customer.FirstName;
+            model.LastName = order.Customer.LastName;
+            model.Email = order.Customer.Email;
+        }
+
+        public void NoContactProvided(PlaceOrderModel orderModel)
+        {
+            if(string.IsNullOrEmpty(orderModel.FirstName))
+                Errors.Add("FirstName", "First Name Missing");
+
+            if(string.IsNullOrEmpty(orderModel.LastName))
+                Errors.Add("LastName", "Last Name Missing");
+
+            if(string.IsNullOrEmpty(orderModel.Email))
+                Errors.Add("Email", "Email Missing");
         }
     }
 }
