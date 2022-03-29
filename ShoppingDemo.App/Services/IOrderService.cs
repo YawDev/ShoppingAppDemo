@@ -20,7 +20,12 @@ namespace ShoppingDemo.App.Services
 
     public class OrderService : IOrderService
     {
-        
+        Dictionary<string,string> Errors;
+
+        public OrderService()
+        {
+            Errors = new Dictionary<string, string>();
+        }
         
         public OrderModel PrepareOrder(ShoppingCartModel cart)
         {
@@ -95,6 +100,7 @@ namespace ShoppingDemo.App.Services
             order.OrderNumber = "111111";
             order.Phone = orderModel.Phone;
             order.Card = new PaymentCard();
+            order.Total = orderModel.Total;
             if(!orderModel.Payment.UseExistingCard)
             {
                 order.Card.CardNumber = orderModel.Payment.CardNumber;

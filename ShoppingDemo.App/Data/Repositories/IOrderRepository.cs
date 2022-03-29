@@ -8,7 +8,7 @@ namespace ShoppingDemo.EFCore
 {
     public interface IOrderRepository : IRepository<Order>
     {
-        
+        IEnumerable<Order> GetOrdersByUser(string Id);
     }
 
     public class OrderRepository : IOrderRepository
@@ -46,6 +46,15 @@ namespace ShoppingDemo.EFCore
         public IEnumerable<Order> GetAll()
         {
             return _context.Orders.ToList();
+        }
+
+
+        public IEnumerable<Order> GetOrdersByUser(string Id)
+        {
+            return _context.Orders.Include(x => x.Items).Include(x => x.ShippingAddress)
+            .Include(x => x.Card).ThenInclude(x => x.BillingAddress)
+            .Include(x => x.User)
+            .ToList().FindAll(x => x.User.Id==Id);
         }
 
         public Order GetById(Guid Id)

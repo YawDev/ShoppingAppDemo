@@ -10,6 +10,7 @@ namespace ShoppingDemo.App.Mapping
             CreateMap<Item, ItemModel>();
             CreateMap<OrderItem, OrderItemModel>();
             CreateMap<Order, PlaceOrderModel>();
+            CreateMap<Order, OrderModel>();
             CreateMap<OrderItem, OrderItemModel>();
             CreateMap<OrderModel, PlaceOrderModel>();
             CreateMap<ShoppingCartItemModel, OrderItemModel>();

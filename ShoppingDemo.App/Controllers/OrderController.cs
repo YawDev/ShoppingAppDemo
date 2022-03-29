@@ -23,7 +23,7 @@ namespace ShoppingDemo.App.Controllers
             _logger = logger;
             _signInManager = signInManager;
             _userManager = userManager;
-            this.orderRepository = orderRepository;
+            _orderRepository = orderRepository;
             _cryptoService = cryptoService;
             _shoppingCartRepository = shoppingCartRepository;
             _orderService = orderService;
@@ -34,14 +34,26 @@ namespace ShoppingDemo.App.Controllers
 
         public IActionResult ViewOrders()
         {
-            return View();
+            if(_signInManager.IsSignedIn(User))
+            {
+                var user = _userManager.GetUserAsync(User).Result;
+                var Orders = _orderRepository.GetOrdersByUser(user.Id);
+                var model = _mapper.Map<List<OrderModel>>(Orders);
+                return View(model);
+            }
+            return RedirectToAction("Login");
         }
 
 
         public IActionResult ViewOrderDetail(Guid Id)
         {
-            return View();
-        }
+            if(_signInManager.IsSignedIn(User))
+            {
+                var order = _orderRepository.GetById(Id);
+                var model = _mapper.Map<OrderModel>(order);
+                return View(model);
+            }
+            return RedirectToAction("Login");        }
 
 
         public IActionResult PlaceOrder()
@@ -86,11 +98,12 @@ namespace ShoppingDemo.App.Controllers
                 }
 
                 
-
-                _orderService.MapModelToOrder(model, order);
                 order.User = _userManager.GetUserAsync(User).Result;
-                orderRepository.Add(order);
-                orderRepository.Commit();
+                order.Items = _mapper.Map<List<OrderItem>>(model.Items);
+                order.Total = order.Items.Sum(x => x.ItemListing.Price * x.QuantityInCart); 
+                _orderService.MapModelToOrder(model, order);
+                _orderRepository.Add(order);
+                _orderRepository.Commit();
                 
                 return RedirectToAction("Index","Home");
             }
@@ -101,7 +114,7 @@ namespace ShoppingDemo.App.Controllers
         private readonly ILogger<OrderController> _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IOrderRepository orderRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IUserRepository _userRepository;
         private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly ICryptoService _cryptoService;
