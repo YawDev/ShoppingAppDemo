@@ -21,16 +21,14 @@ namespace ShoppingDemo.App.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         ICustomerComposition _customerComposition;
-        IOrderService _orderService;
         IMapper _mapper;
 
-        public OrderController(ILogger<OrderController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ICustomerComposition customerComposition, IOrderService orderService)
+        public OrderController(ILogger<OrderController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ICustomerComposition customerComposition)
         {
             _logger = logger;
             _signInManager = signInManager;
             _userManager = userManager;
             _customerComposition = customerComposition;
-            _orderService = orderService;
             _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
         }
 
@@ -72,12 +70,11 @@ namespace ShoppingDemo.App.Controllers
 
             if(ModelState.IsValid)
             {
-                
                 _customerComposition.ProcessOrder(model,order,user);
-                var errors = _orderService.GetErrors();
+                var errors = _customerComposition.GetModelErrors();
                 if(errors.Count > 0)
                 {
-                    ViewBag.Message = _customerComposition.GetModelErrors();
+                    ViewBag.Message = _customerComposition.GetErrorMessage();
                     return View(model);
                 }
 
