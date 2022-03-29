@@ -82,7 +82,9 @@ namespace ShoppingDemo.App.Controllers
                 var user =  new ApplicationUser
                 {
                     Email = model.Email,
-                    UserName = model.Username
+                    UserName = model.Username,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName
                 }; 
                 _userManager.CreateAsync(user,model.Password);
                 _userRepository.CreateUser(user);

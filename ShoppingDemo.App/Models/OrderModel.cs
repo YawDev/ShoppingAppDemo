@@ -12,6 +12,8 @@ namespace Shopper.App.Models
 
         public decimal Total { get; set; }
 
+        public string Status { get; set; }
+
         public List<OrderItemModel> Items {get;set;}
 
         [Required]
@@ -34,7 +36,6 @@ namespace Shopper.App.Models
 
     public class PlaceOrderModel : OrderModel
     {
-        public List<OrderItemModel> items { get; set; }
     }
 
     public class OrderItemModel

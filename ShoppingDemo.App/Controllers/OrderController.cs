@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +38,7 @@ namespace ShoppingDemo.App.Controllers
             if(_signInManager.IsSignedIn(User))
             {
                 var user = _userManager.GetUserAsync(User).Result;
-                var Orders = _orderRepository.GetOrdersByUser(user.Id);
+                var Orders = _orderRepository.GetOrdersByUserId(user.Id);
                 var model = _mapper.Map<List<OrderModel>>(Orders);
                 return View(model);
             }
@@ -80,25 +81,47 @@ namespace ShoppingDemo.App.Controllers
                 if(model.Payment.UseExistingCard)
                 {
                     var card = _userRepository.GetPaymentDetails(_userManager.GetUserId(User));
-                    _orderService.UseExistingCard(card,order);
 
 
                     
                     var billingAddress = _userRepository.GetBillingAddress(_userManager.GetUserId(User));
 
-                    _orderService.UseExistingBillingAddress(billingAddress,order);
-                    
+                    if(!_orderService.MissingCardBilling(billingAddress, card))
+                    {   
+                        _orderService.UseExistingCard(card,order);
+                        _orderService.UseExistingBillingAddress(billingAddress,order);
+                    }
                 }
 
                 if(model.ShippingAddress.UseExistingAddress )
                 {
                     var shippingAddress = _userRepository.GetShippingAddress(_userManager.GetUserId(User));
 
-                    _orderService.UseExistingShippingAddress(shippingAddress,order);
+                    if(!_orderService.MissingShippingAddress(shippingAddress))
+                        _orderService.UseExistingShippingAddress(shippingAddress,order);
                 }
 
-                
-                order.User = _userManager.GetUserAsync(User).Result;
+                var errors = _orderService.GetErrors();
+                if(errors.Count > 0)
+                {
+                    var sb = new StringBuilder();
+                    foreach(var error in errors)
+                    {
+                        sb.AppendLine(error.Value+",");
+                        sb.AppendLine("\n");
+                    }
+                    ViewBag.Message = sb.ToString();
+                    return View(model);
+                }
+                var user =_userManager.GetUserAsync(User).Result;
+                order.Customer = new Customer
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                };
+
+                order.UserId = user.Id;
                 order.Items = _mapper.Map<List<OrderItem>>(model.Items);
                 order.Total = order.Items.Sum(x => x.ItemListing.Price * x.QuantityInCart); 
                 _orderService.MapModelToOrder(model, order);

@@ -8,6 +8,7 @@ namespace Shopper.App.Models
         public string Addressline2 { get; set; }
         public string Addressline3 { get; set; }
         public string State { get; set; }
+        public string City { get; set; }
         public string Zipcode { get; set; }
         public string Country { get; set; }
         public bool UseExistingAddress { get; set; }

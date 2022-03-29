@@ -15,6 +15,11 @@ namespace ShoppingDemo.App.Services
         void UseExistingShippingAddress(ShippingAddress address, Order order);
         void UseExistingBillingAddress(BillingAddress address, Order order);
 
+        bool MissingCardBilling(BillingAddress address, PaymentCard card);
+        bool MissingShippingAddress(ShippingAddress address);
+
+        Dictionary<string,string> GetErrors();
+
         Order MapContactInfoToOrder(PlaceOrderModel orderModel, Order order);
     }
 
@@ -48,6 +53,28 @@ namespace ShoppingDemo.App.Services
             }
             
             return orderModel;
+        }
+
+        public bool MissingCardBilling(BillingAddress address, PaymentCard card)
+        {
+            if(address == null || card == null)
+            {
+                Errors.Add("CardBillingAddress", "No Existing Card / Billing Address");
+                return true;
+            }
+            return false;
+                
+        }
+
+
+        public bool MissingShippingAddress(ShippingAddress address)
+        {
+            if(address == null)
+            {
+                Errors.Add("ShippingAddress", "No Existing Address for Shipping");
+                return true;
+            }
+            return false;
         }
 
         public void UseExistingCard(PaymentCard card, Order order)
@@ -106,6 +133,8 @@ namespace ShoppingDemo.App.Services
                 order.Card.CardNumber = orderModel.Payment.CardNumber;
                 order.Card.CVV = orderModel.Payment.CVV;
                 order.Card.NameOnCard = orderModel.Payment.CardNumber;
+                order.Card.Expiry = orderModel.Payment.Expiry;
+
 
 
                 order.Card.BillingAddress = new BillingAddress();
@@ -115,6 +144,8 @@ namespace ShoppingDemo.App.Services
                 order.Card.BillingAddress.Zipcode = orderModel.Payment.BillingAddress.Zipcode;
                 order.Card.BillingAddress.Country = orderModel.Payment.BillingAddress.Country;
                 order.Card.BillingAddress.State = orderModel.Payment.BillingAddress.State;
+                order.Card.BillingAddress.City = orderModel.Payment.BillingAddress.City;
+
             }
 
         
@@ -127,10 +158,16 @@ namespace ShoppingDemo.App.Services
                 order.ShippingAddress.Addressline3 = orderModel.ShippingAddress.Addressline3;
                 order.ShippingAddress.Zipcode = orderModel.ShippingAddress.Zipcode;
                 order.ShippingAddress.Country = orderModel.ShippingAddress.Country;
+                order.ShippingAddress.City = orderModel.ShippingAddress.City;
                 order.ShippingAddress.State = orderModel.ShippingAddress.State;
             }
 
             return order;
+        }
+
+        public Dictionary<string, string> GetErrors()
+        {
+            return Errors;
         }
     }
 }
