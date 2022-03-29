@@ -4,7 +4,10 @@
 @{
     ViewData["Title"] = "Place Order";
 }
-
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-danger">@ViewBag.Message</div>
+}
 
 <br>
 <p>
@@ -83,6 +86,12 @@
                    <label class="control-label">AddressLine 3</label>
                     <input asp-for="Payment.BillingAddress.Addressline3"  class="form-control"type="text" />
                     <span asp-validation-for="Payment.BillingAddress.Addressline3" class="text-danger"></span>
+                </div>
+
+                             <div class="form-group">
+                   <label class="control-label">City</label>
+                    <input asp-for="Payment.BillingAddress.City"  class="form-control"type="text" />
+                    <span asp-validation-for="Payment.BillingAddress.City" class="text-danger"></span>
                 </div>
 
              <div class="form-group">

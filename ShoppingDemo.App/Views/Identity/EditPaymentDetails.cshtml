@@ -14,21 +14,34 @@
                      <div class="form-group">
                    <label class="control-label">Name On Card</label>
                     <input asp-for="NameOnCard"  class="form-control"type="text" />
+                        <span asp-validation-for="NameOnCard" class="text-danger"></span>
+
                 </div>
 
                  <div class="form-group">
                    <label class="control-label">Card Number</label>
                     <input asp-for="CardNumber"  class="form-control"type="text" />
+                            <span asp-validation-for="CardNumber" class="text-danger"></span>
+
+                </div>
+
+                    <div class="form-group">
+                   <label class="control-label">Expiry Date</label>
+                    <input asp-for="Expiry"  class="form-control" />
+                            <span asp-validation-for="Expiry" class="text-danger"></span>
+
                 </div>
 
                  <div class="form-group">
-                   <label class="control-label">CVV/CV2</label>
+                   <label class="control-label">Security Code</label>
                     <input asp-for="CVV"  class="form-control"type="text" />
                 </div>
 
                      <div class="form-group">
                    <label class="control-label">AddressLine 1</label>
                     <input asp-for="BillingAddress.Addressline1"  class="form-control"type="text" />
+                            <span asp-validation-for="BillingAddress.Addressline1" class="text-danger"></span>
+
                 </div>
 
                  <div class="form-group">
@@ -41,14 +54,33 @@
                     <input asp-for="BillingAddress.Addressline3"  class="form-control"type="text" />
                 </div>
 
+                 <div class="form-group">
+                   <label class="control-label">City</label>
+                    <input asp-for="BillingAddress.City"  class="form-control"type="text" />
+                            <span asp-validation-for="BillingAddress.City" class="text-danger"></span>
+
+                </div>
+
              <div class="form-group">
                    <label class="control-label">State</label>
                     <input asp-for="BillingAddress.State"  class="form-control"type="text" />
+                            <span asp-validation-for="BillingAddress.State" class="text-danger"></span>
+
                 </div>
 
                  <div class="form-group">
                    <label class="control-label">Zip Code</label>
                     <input asp-for="BillingAddress.Zipcode"  class="form-control"type="text" />
+                                <span asp-validation-for="BillingAddress.Zipcode" class="text-danger"></span>
+
+                </div>
+
+
+                   <div class="form-group">
+                   <label class="control-label">Country</label>
+                    <input asp-for="BillingAddress.Country"  class="form-control"type="text" />
+                                <span asp-validation-for="BillingAddress.Country" class="text-danger"></span>
+
                 </div>
 
                 <div class="form-group">

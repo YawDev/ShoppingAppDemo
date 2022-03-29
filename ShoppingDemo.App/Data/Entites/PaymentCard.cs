@@ -1,4 +1,5 @@
 using System;
+using ShoppingDemo.App.Data.Enums;
 
 namespace ShoppingDemo.App.Data.Entites
 {
@@ -10,7 +11,9 @@ namespace ShoppingDemo.App.Data.Entites
 
         public string CardNumber { get; set; }
 
-        public string SecurityCode { get; set; }
+        public DateTime Expiry { get; set; }
+
+        public CardType CardType { get; set; }
 
         public string CVV { get; set; }
 

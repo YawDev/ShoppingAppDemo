@@ -1,3 +1,5 @@
+using System;
+
 namespace Shopper.App.Models
 {
     public class CardModel
@@ -9,6 +11,8 @@ namespace Shopper.App.Models
         public string SecurityCode { get; set; }
 
         public string CVV { get; set; }
+
+        public DateTime Expiry { get; set; }
 
         public AddressModel BillingAddress { get; set; }
 
