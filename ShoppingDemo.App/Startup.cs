@@ -51,6 +51,10 @@ namespace ShoppingAppDemo
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserDetailsComposition, UserDetailsComposition>();
             services.AddScoped<ICustomerComposition, CustomerComposition>();
+            services.AddScoped<IUploadService, UploadService>();
+            services.AddScoped<IItemService, ItemService>();
+
+
 
         }
 
