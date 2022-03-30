@@ -23,13 +23,13 @@ namespace ShoppingDemo.App.Services
     {
 
         private readonly IShoppingCartRepository _shoppingCartRepository;
-        private readonly ItemService _itemService;
+        private readonly IItemService _itemService;
 
         private readonly IShoppingCartItemRepository _shoppingCartItemRepository;
         IMapper _mapper;
 
         public ShoppingCartService(IShoppingCartRepository shoppingCartRepository, IShoppingCartItemRepository shoppingCartItemRepository,
-        ItemService itemService)
+        IItemService itemService)
         {
             _shoppingCartRepository = shoppingCartRepository;
             _shoppingCartItemRepository = shoppingCartItemRepository;

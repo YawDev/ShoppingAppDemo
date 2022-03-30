@@ -23,7 +23,7 @@ namespace ShoppingDemo.App.Controllers
         IItemService _itemService;
         IMapper _mapper;
 
-        public ShoppingCartController(ILogger<ShoppingCartController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IShoppingCartService shoppingCartService, IItemService itemService, IMapper mapper)
+        public ShoppingCartController(ILogger<ShoppingCartController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IShoppingCartService shoppingCartService, IItemService itemService)
         {
             _logger = logger;
             _signInManager = signInManager;

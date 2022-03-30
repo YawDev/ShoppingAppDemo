@@ -23,11 +23,11 @@ namespace ShoppingDemo.App.Controllers
         IMapper _mapper {get;set;}
         IItemService _itemService;
 
-        public ItemController(ILogger<ItemController> logger, SignInManager<ApplicationUser> signInManager, IMapper mapper, IItemService itemService)
+        public ItemController(ILogger<ItemController> logger, SignInManager<ApplicationUser> signInManager, IItemService itemService)
         {
             _logger = logger;
             _signInManager = signInManager;
-            _mapper = mapper;
+            _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
             _itemService = itemService;
         }
 
