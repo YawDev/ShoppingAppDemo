@@ -10,7 +10,7 @@ using ShoppingDemo.EFCore;
 
 namespace ShoppingDemo.App.Services
 {
-    public interface ICustomerComposition
+    public interface ICustomerOrderService
     {
          void ProcessOrder(PlaceOrderModel model,Order order, ApplicationUser user);
 
@@ -26,11 +26,10 @@ namespace ShoppingDemo.App.Services
 
          Dictionary<string,string> GetModelErrors();
 
-         ShoppingCartModel GetShoppingCart(ApplicationUser user);
    
     }
 
-    public class CustomerComposition : ICustomerComposition
+    public class CustomerOrderService : ICustomerOrderService
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IUserRepository _userRepository;
@@ -39,7 +38,7 @@ namespace ShoppingDemo.App.Services
         private readonly IOrderService _orderService;
         IMapper _mapper;
 
-        public CustomerComposition(IOrderRepository orderRepository, IUserRepository userRepository, IShoppingCartRepository shoppingCartRepository, ICryptoService cryptoService, IOrderService orderService)
+        public CustomerOrderService(IOrderRepository orderRepository, IUserRepository userRepository, IShoppingCartRepository shoppingCartRepository, ICryptoService cryptoService, IOrderService orderService)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
@@ -138,20 +137,6 @@ namespace ShoppingDemo.App.Services
                 _orderRepository.Commit();
         }
 
-        public ShoppingCartModel GetShoppingCart(ApplicationUser user)
-         {
-             var cart = _shoppingCartRepository.GetByUserId(user.Id);
-                if(cart is null)
-                {
-                    cart = new ShoppingCart();
-                    cart.Items = new List<ShoppingCartItem>();
-                    cart.User = user;
-                    _shoppingCartRepository.Add(cart);
-                    _shoppingCartRepository.Commit();
-                }
-                var model = _mapper.Map<ShoppingCartModel>(cart);
-                model.Total = cart.Items.Sum(x => x.ItemListing.Price* x.QuantityInCart);
-                return model;
-         }
+       
     }
 }

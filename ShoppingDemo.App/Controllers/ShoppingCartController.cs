@@ -19,24 +19,18 @@ namespace ShoppingDemo.App.Controllers
         private readonly ILogger<ShoppingCartController> _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IShoppingCartRepository _shoppingCartRepository;
-        private readonly IItemRepository _itemRepository;
-        private readonly IShoppingCartItemRepository _shoppingCartItemRepository;
-
-        ICustomerComposition _customerComposition;
-
+        IShoppingCartService _shoppingCartService;
+        IItemService _itemService;
         IMapper _mapper;
 
-        public ShoppingCartController(ILogger<ShoppingCartController> logger, SignInManager<ApplicationUser> signInManager, IShoppingCartRepository shoppingCartRepository,
-        UserManager<ApplicationUser> userManger,IItemRepository itemRepository,IShoppingCartItemRepository shoppingCartItemRepository)
+        public ShoppingCartController(ILogger<ShoppingCartController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IShoppingCartService shoppingCartService, IItemService itemService, IMapper mapper)
         {
             _logger = logger;
             _signInManager = signInManager;
-            _shoppingCartRepository = shoppingCartRepository;
-            _userManager = userManger;
-            _itemRepository = itemRepository;
-             _shoppingCartItemRepository = shoppingCartItemRepository;
-            _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
+            _userManager = userManager;
+            _shoppingCartService = shoppingCartService;
+            _itemService = itemService;
+            _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();        
         }
 
         public IActionResult ViewCart()
@@ -44,7 +38,7 @@ namespace ShoppingDemo.App.Controllers
             if(_signInManager.IsSignedIn(User))
             {
                 var user = _userManager.GetUserAsync(User).Result;
-                return View(_customerComposition.GetShoppingCart(user));
+                return View(_shoppingCartService.MapShoppingCartModel(user));
             }
             return RedirectToAction("Login","Identity");
         }
@@ -54,16 +48,8 @@ namespace ShoppingDemo.App.Controllers
             if(_signInManager.IsSignedIn(User))
             {
                 var user = _userManager.GetUserAsync(User).Result;
-                var cart = _shoppingCartRepository.GetByUserId(user.Id);
-                if(cart is null)
-                {
-                    cart = new ShoppingCart();
-                    _shoppingCartRepository.Add(cart);
-                    cart.User = user;
-                    _shoppingCartRepository.Commit();
-                }
-
-                var item = _itemRepository.GetById(Id);
+                var cart = _shoppingCartService.GetShoppingCart(user);
+                var item = _itemService.FindItem(Id);
                 return View(_mapper.Map<ItemModel>(item));
                 
             }
@@ -74,26 +60,9 @@ namespace ShoppingDemo.App.Controllers
         public IActionResult AddToCart(ItemModel model)
         {
             var user = _userManager.GetUserAsync(User).Result;
-            var cart = _shoppingCartRepository.GetByUserId(user.Id);
+            var cart = _shoppingCartService.GetShoppingCart(user);
 
-            if(cart.Items.Any(x => x.ItemListing?.Id == model.Id))
-            {
-                var existingItem = cart.Items.FirstOrDefault(x => x.ItemListing.Id == model.Id);
-                existingItem.QuantityInCart++;
-                cart.Total = cart.Items.Sum(x => x.ItemListing.Price* x.QuantityInCart);
-                _shoppingCartRepository.Commit();
-                return RedirectToAction("ViewCart");
-            }
-            var item = _itemRepository.GetById(model.Id);
-            var shoppingCartItem = new ShoppingCartItem
-            {
-                Cart = cart,
-                ItemListing = item,
-                QuantityInCart = 1
-            };
-            cart.Items.Add(shoppingCartItem);
-            cart.Total = cart.Items.Sum(x => x.ItemListing.Price* x.QuantityInCart);
-            _shoppingCartRepository.Commit();
+           _shoppingCartService.AddCartItem(cart, model);
             return RedirectToAction("ViewCart");
         }
 
@@ -105,16 +74,8 @@ namespace ShoppingDemo.App.Controllers
             if(_signInManager.IsSignedIn(User))
             {
                 var user = _userManager.GetUserAsync(User).Result;
-                var cart = _shoppingCartRepository.GetByUserId(user.Id);
-
-                if(cart is null)
-                {
-                    cart = new ShoppingCart();
-                    _shoppingCartRepository.Add(cart);
-                    _shoppingCartRepository.Commit();
-                }
-
-                var item = _itemRepository.GetById(Id);
+                var cart = _shoppingCartService.GetShoppingCart(user);
+                var item = _itemService.FindItem(Id);
                 return View(_mapper.Map<ItemModel>(item));
                 
             }
@@ -124,20 +85,8 @@ namespace ShoppingDemo.App.Controllers
         public IActionResult RemoveFromCart(ItemModel model)
         {
             var user = _userManager.GetUserAsync(User).Result;
-            var cart = _shoppingCartRepository.GetByUserId(user.Id);
-
-            if(cart.Items.Any(x => x.ItemListing?.Id == model.Id && x.QuantityInCart > 1))
-            {
-                var existingItem = cart.Items.FirstOrDefault(x => x.ItemListing.Id == model.Id);
-                existingItem.QuantityInCart--;
-                _shoppingCartRepository.Commit();
-                return RedirectToAction("ViewCart");
-            }
-            var item = _shoppingCartItemRepository.GetByItemId(model.Id);
-
-            cart.Items.Remove(item);
-            _shoppingCartItemRepository.Delete(item);
-            _shoppingCartItemRepository.Commit();
+            var cart = _shoppingCartService.GetShoppingCart(user);
+            _shoppingCartService.RemoveCartItem(cart, model);
             return RedirectToAction("ViewCart");
         }
     }
