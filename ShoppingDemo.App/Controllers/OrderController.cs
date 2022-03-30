@@ -20,10 +20,10 @@ namespace ShoppingDemo.App.Controllers
         private readonly ILogger<OrderController> _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        ICustomerComposition _customerComposition;
+        ICustomerOrderService _customerComposition;
         IMapper _mapper;
 
-        public OrderController(ILogger<OrderController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ICustomerComposition customerComposition)
+        public OrderController(ILogger<OrderController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ICustomerOrderService customerComposition)
         {
             _logger = logger;
             _signInManager = signInManager;
