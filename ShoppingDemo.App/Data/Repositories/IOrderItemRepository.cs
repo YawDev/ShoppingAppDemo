@@ -49,7 +49,6 @@ namespace ShoppingDemo.EFCore
         public OrderItem GetById(Guid Id)
         {
             return _context.orderItems.Include(x => x.order).ThenInclude(x => x.ShippingAddress)
-            .Include(x => x.ItemListing)
             .ToList().Find(x => x.Id == Id);
         }
     }

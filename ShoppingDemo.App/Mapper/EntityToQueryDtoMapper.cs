@@ -10,12 +10,16 @@ namespace ShoppingDemo.App.Mapping
         {
             CreateMap<Item, ItemModel>();
             CreateMap<OrderItem, OrderItemModel>();
+            CreateMap<OrderItemModel, OrderItem>();
+
             CreateMap<Order, PlaceOrderModel>();
             CreateMap<Order, OrderModel>()
               .ForMember(x => x.FirstName, src => src.MapFrom(s => s.Customer.FirstName))
               .ForMember(x => x.LastName, src => src.MapFrom(s => s.Customer.LastName))
               .ForMember(x => x.Email, src => src.MapFrom(s => s.Customer.Email))
-              .ForMember(dest => dest.Status, opt => opt.MapFrom(x => System.Enum.GetName(typeof(OrderStatus), x.Status)));
+              .ForMember(dest => dest.Status, opt => opt.MapFrom(x => System.Enum.GetName(typeof(OrderStatus), x.Status)))
+              .ForMember(dest => dest.Items, opt => opt.MapFrom(x => x.Items));
+
 
 
             CreateMap<OrderItem, OrderItemModel>();

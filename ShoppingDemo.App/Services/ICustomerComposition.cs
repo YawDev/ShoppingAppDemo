@@ -79,8 +79,11 @@ namespace ShoppingDemo.App.Services
 
         public void ProcessOrder(PlaceOrderModel model, Order order,ApplicationUser user)
         {
+            var cart = _shoppingCartRepository.GetById(user.CartSessionId);
+            model.Total = cart.Total;
+            order.Total = cart.Total;
 
-
+        
             if(model.UseExistingContactInfo)
                 _orderService.UseExistingContactInfo(user, order, model);
             else
@@ -130,8 +133,6 @@ namespace ShoppingDemo.App.Services
         {
 
                 order.UserId = userId;
-                order.Items = _mapper.Map<List<OrderItem>>(model.Items);
-                order.Total = order.Items.Sum(x => x.ItemListing.Price * x.QuantityInCart); 
                 _orderService.MapModelToOrder(model, order);
                 _orderRepository.Add(order);
                 _orderRepository.Commit();

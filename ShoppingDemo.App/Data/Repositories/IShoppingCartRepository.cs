@@ -47,13 +47,14 @@ namespace ShoppingDemo.EFCore
 
         public ShoppingCart GetById(Guid Id)
         {
-            return _context.ShoppingCarts.FirstOrDefault(x => x.Id == Id);
+            return _context.ShoppingCarts.Include(x => x.Items)
+            .FirstOrDefault(x => x.Id == Id);
         }
 
         public ShoppingCart GetByUserId(string userId)
         {
             return _context.ShoppingCarts.Include(x => x.Items)
-                .ThenInclude(x => x.ItemListing).FirstOrDefault(x => x.User.Id == userId);
+                .FirstOrDefault(x => x.User.Id == userId);
         }
     }
 }

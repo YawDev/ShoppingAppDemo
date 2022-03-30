@@ -50,8 +50,8 @@ namespace ShoppingDemo.EFCore
 
         public List<ShoppingCartItem> GetAllByItemId(Guid Id)
         {
-            return _context.ShoppingCartItems.Include(x => x.ItemListing).ToList()
-            .FindAll(x => x.ItemListing.Id==Id);
+            return _context.ShoppingCartItems.ToList()
+            .FindAll(x => x.ItemId==Id);
         }
 
         public void DeleteRange(IEnumerable<ShoppingCartItem> items)
@@ -66,7 +66,7 @@ namespace ShoppingDemo.EFCore
 
         public ShoppingCartItem GetByItemId(Guid Id)
         {
-            return _context.ShoppingCartItems?.FirstOrDefault(x => x.ItemListing.Id==Id);
+            return _context.ShoppingCartItems?.FirstOrDefault(x => x.ItemId==Id);
         }
     }
 }

@@ -25,7 +25,6 @@ namespace ShoppingDemo.EFCore
 
         public void Add(Order order)
         {
-            _context.orderItems.AddRange(order.Items);
             _context.Orders.Add(order);
         }
 
@@ -61,7 +60,7 @@ namespace ShoppingDemo.EFCore
 
         public Order GetById(Guid Id)
         {
-            return _context.Orders.Include(x => x.Items ).ThenInclude(x => x.ItemListing)
+            return _context.Orders.Include(x => x.Items)
             .Include(x => x.ShippingAddress).Include(x => x.Customer)
             .ToList().FirstOrDefault(x => x.Id == Id);
         }

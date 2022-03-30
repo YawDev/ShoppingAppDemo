@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using AutoMapper;
 using Shopper.App.Models;
 using ShoppingDemo.App.Data.Entites;
+using ShoppingDemo.App.Data.Repositories;
 using ShoppingDemo.App.Mapping;
 
 namespace ShoppingDemo.App.Services
@@ -30,9 +31,12 @@ namespace ShoppingDemo.App.Services
     {
         Dictionary<string,string> Errors;
 
-        public OrderService()
+        ICustomerRepository _customerRepository;
+
+        public OrderService(ICustomerRepository _customerRepository)
         {
             Errors = new Dictionary<string, string>();
+            this._customerRepository = _customerRepository;
         }
         
         public OrderModel PrepareOrder(ShoppingCartModel cart)
@@ -50,7 +54,9 @@ namespace ShoppingDemo.App.Services
                 {
                     QuantityInCart = cartItem.QuantityInCart,
                     Order = orderModel,
-                    ItemListing = cartItem.ItemListing
+                    ImageFile = cartItem.ImageFile,
+                    ItemId = cartItem.ItemId,
+                    Price = cartItem.Price
                 };
                 orderModel.Items.Add(orderItem);
             }
@@ -185,12 +191,19 @@ namespace ShoppingDemo.App.Services
 
         public void UseExistingContactInfo(ApplicationUser user, Order order, OrderModel model)
         {
-            order.Customer = new Customer
+            var existingCustomer = _customerRepository.GetByName(user.FirstName, user.LastName);
+            if(existingCustomer == null)
             {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-            };
+                order.Customer = new Customer
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                };
+            }
+            else
+                order.Customer = existingCustomer;
+            
 
             model.FirstName = order.Customer.FirstName;
             model.LastName = order.Customer.LastName;
