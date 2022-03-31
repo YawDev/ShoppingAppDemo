@@ -14,7 +14,7 @@
          <a class="nav-link text-dark" asp-controller="Identity" asp-action="ViewAccount">Welcome, @user.Email </a>
     </li>
     <li class="nav-item">
-         <a class="nav-link text-dark" asp-controller="ShoppingCart" asp-action="ViewCart">View Cart</a>
+         <a class="nav-link text-dark" asp-controller="ShoppingCart" asp-action="ViewCart"><i style="font-size:15px" class="fa">&#xf07a;</i> View Cart </a>
     </li>
 
       <li class="nav-item">
@@ -22,13 +22,17 @@
     </li>
     
     <li class="nav-item">
-         <a class="nav-link text-dark" asp-controller="Identity" asp-action="Logout">Log Out</a>
+         <a class="nav-link text-dark" asp-controller="Identity" asp-action="Logout"><i style="font-size:15px" class="fa">&#xf08b;</i>
+
+ Log Out</a>
     </li>
 } 
 else
 {
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Identity" asp-action="Register">Register</a>
+        <a class="nav-link text-dark" asp-controller="Identity" asp-action="Register"><i style="font-size:15px" class="fa">&#xf044;</i>
+
+ Register</a>
     </li>
     <li class="nav-item">
         <a class="nav-link text-dark" asp-controller="Identity" asp-action="Login">Login</a>
