@@ -103,7 +103,11 @@ namespace ShoppingDemo.App.Services
                         _orderService.UseExistingCard(card,order);
                         _orderService.UseExistingBillingAddress(billingAddress,order);
                     }
+                    else
+                        _orderService.AddressFields(model.Payment.BillingAddress);
                 }
+                else
+                    _orderService.PaymentFields(model);
 
                 if(model.ShippingAddress.UseExistingAddress )
                 {
@@ -112,6 +116,8 @@ namespace ShoppingDemo.App.Services
                     if(!_orderService.MissingShippingAddress(shippingAddress))
                         _orderService.UseExistingShippingAddress(shippingAddress,order);
                 }
+                else
+                    _orderService.AddressFields(model.ShippingAddress);
 
 
         }

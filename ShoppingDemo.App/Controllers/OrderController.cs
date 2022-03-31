@@ -82,7 +82,7 @@ namespace ShoppingDemo.App.Controllers
                 _customerComposition.SaveOrder(model,order,user.Id);
                 return RedirectToAction("Index","Home");
             }
-            return View(model);
+            return View(_customerComposition.MapOrderForm(user.Id));
         }
 
 

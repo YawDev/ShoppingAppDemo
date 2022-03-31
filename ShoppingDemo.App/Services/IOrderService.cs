@@ -13,6 +13,10 @@ namespace ShoppingDemo.App.Services
         Order MapModelToOrder(PlaceOrderModel orderModel, Order order);
         void NoContactProvided(PlaceOrderModel orderModel);
 
+        void PaymentFields(PlaceOrderModel orderModel);
+
+        void AddressFields(AddressModel model);
+
         void UseExistingContactInfo(ApplicationUser user, Order order, OrderModel model);
 
         void UseExistingCard(PaymentCard card, Order order);
@@ -220,6 +224,35 @@ namespace ShoppingDemo.App.Services
 
             if(string.IsNullOrEmpty(orderModel.Email))
                 Errors.Add("Email", "Email Missing");
+        }
+
+
+        public void PaymentFields(PlaceOrderModel orderModel)
+        {
+            if(string.IsNullOrEmpty(orderModel.Payment.NameOnCard))
+                Errors.Add("Name On Card", "Name on Card Missing");
+
+            if(string.IsNullOrEmpty(orderModel.Payment.CardNumber))
+                Errors.Add("Card Number", "Card Number Missing");
+
+            if(string.IsNullOrEmpty(orderModel.Payment.CVV))
+                Errors.Add("CVV", "CVV Missing");
+        }
+
+
+        public void AddressFields(AddressModel model)
+        {
+            if(string.IsNullOrEmpty(model.Addressline1))
+                Errors.Add("Address1", "Address 1 Missing");
+
+            if(string.IsNullOrEmpty(model.City))
+                Errors.Add("City", "City missing");
+
+            if(string.IsNullOrEmpty(model.State))
+                Errors.Add("State", "State Missing");
+
+             if(string.IsNullOrEmpty(model.State))
+                Errors.Add("ZipCode", "Zip Code Missing");
         }
     }
 }
