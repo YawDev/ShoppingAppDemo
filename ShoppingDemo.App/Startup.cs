@@ -69,6 +69,8 @@ namespace ShoppingAppDemo
             services.AddScoped<IUploadService, UploadService>();
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
             services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IEmailService, EmailService>();
+
 
         }
 
