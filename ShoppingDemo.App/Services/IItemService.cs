@@ -18,10 +18,14 @@ namespace ShoppingDemo.App.Services
         IUploadService _uploadService;
         IItemRepository _itemRepository;
 
-        public ItemService(IUploadService uploadService, IItemRepository itemRepository)
+        IShoppingCartItemRepository _shoppingCartItemRepository;
+
+        public ItemService(IUploadService uploadService, IItemRepository itemRepository,
+        IShoppingCartItemRepository shoppingCartItemRepository)
         {
             _uploadService = uploadService;
             _itemRepository = itemRepository;
+            _shoppingCartItemRepository = shoppingCartItemRepository;
         }
 
         public void CreateItem(AddItemModel model)
@@ -70,6 +74,10 @@ namespace ShoppingDemo.App.Services
 
         public void DeleteItem(Item item)
         {
+            var cartItems =_shoppingCartItemRepository.GetAllByItemId(item.Id);
+            if(cartItems.Count >0)
+                _shoppingCartItemRepository.DeleteRange(cartItems);
+
            _itemRepository.Delete(item);
            _itemRepository.Commit();
         }

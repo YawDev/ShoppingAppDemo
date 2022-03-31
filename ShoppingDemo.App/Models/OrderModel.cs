@@ -36,8 +36,10 @@ namespace Shopper.App.Models
     public class OrderItemModel
     {
         public Guid Id { get; set; }
+        public Guid ItemId { get; set; }
 
-        public ItemModel ItemListing { get; set; }
+        public decimal Price { get; set; }
+        public string ImageFile { get; set; }
 
         public int QuantityInCart { get; set; }
 

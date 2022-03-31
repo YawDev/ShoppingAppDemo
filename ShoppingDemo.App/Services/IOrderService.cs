@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using AutoMapper;
 using Shopper.App.Models;
 using ShoppingDemo.App.Data.Entites;
+using ShoppingDemo.App.Data.Repositories;
 using ShoppingDemo.App.Mapping;
 
 namespace ShoppingDemo.App.Services
@@ -11,6 +12,10 @@ namespace ShoppingDemo.App.Services
         OrderModel PrepareOrder(ShoppingCartModel cart);
         Order MapModelToOrder(PlaceOrderModel orderModel, Order order);
         void NoContactProvided(PlaceOrderModel orderModel);
+
+        void PaymentFields(PlaceOrderModel orderModel);
+
+        void AddressFields(AddressModel model);
 
         void UseExistingContactInfo(ApplicationUser user, Order order, OrderModel model);
 
@@ -30,9 +35,12 @@ namespace ShoppingDemo.App.Services
     {
         Dictionary<string,string> Errors;
 
-        public OrderService()
+        ICustomerRepository _customerRepository;
+
+        public OrderService(ICustomerRepository _customerRepository)
         {
             Errors = new Dictionary<string, string>();
+            this._customerRepository = _customerRepository;
         }
         
         public OrderModel PrepareOrder(ShoppingCartModel cart)
@@ -50,7 +58,9 @@ namespace ShoppingDemo.App.Services
                 {
                     QuantityInCart = cartItem.QuantityInCart,
                     Order = orderModel,
-                    ItemListing = cartItem.ItemListing
+                    ImageFile = cartItem.ImageFile,
+                    ItemId = cartItem.ItemId,
+                    Price = cartItem.Price
                 };
                 orderModel.Items.Add(orderItem);
             }
@@ -185,12 +195,19 @@ namespace ShoppingDemo.App.Services
 
         public void UseExistingContactInfo(ApplicationUser user, Order order, OrderModel model)
         {
-            order.Customer = new Customer
+            var existingCustomer = _customerRepository.GetByName(user.FirstName, user.LastName);
+            if(existingCustomer == null)
             {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-            };
+                order.Customer = new Customer
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                };
+            }
+            else
+                order.Customer = existingCustomer;
+            
 
             model.FirstName = order.Customer.FirstName;
             model.LastName = order.Customer.LastName;
@@ -207,6 +224,35 @@ namespace ShoppingDemo.App.Services
 
             if(string.IsNullOrEmpty(orderModel.Email))
                 Errors.Add("Email", "Email Missing");
+        }
+
+
+        public void PaymentFields(PlaceOrderModel orderModel)
+        {
+            if(string.IsNullOrEmpty(orderModel.Payment.NameOnCard))
+                Errors.Add("Name On Card", "Name on Card Missing");
+
+            if(string.IsNullOrEmpty(orderModel.Payment.CardNumber))
+                Errors.Add("Card Number", "Card Number Missing");
+
+            if(string.IsNullOrEmpty(orderModel.Payment.CVV))
+                Errors.Add("CVV", "CVV Missing");
+        }
+
+
+        public void AddressFields(AddressModel model)
+        {
+            if(string.IsNullOrEmpty(model.Addressline1))
+                Errors.Add("Address1", "Address 1 Missing");
+
+            if(string.IsNullOrEmpty(model.City))
+                Errors.Add("City", "City missing");
+
+            if(string.IsNullOrEmpty(model.State))
+                Errors.Add("State", "State Missing");
+
+             if(string.IsNullOrEmpty(model.State))
+                Errors.Add("ZipCode", "Zip Code Missing");
         }
     }
 }

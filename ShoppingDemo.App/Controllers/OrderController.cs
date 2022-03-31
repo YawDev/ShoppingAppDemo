@@ -66,7 +66,8 @@ namespace ShoppingDemo.App.Controllers
         public IActionResult PlaceOrder(PlaceOrderModel model)
         {
             var user =_userManager.GetUserAsync(User).Result;
-            var order = _mapper.Map<Order>(model);
+
+            var order = new Order();
 
             if(ModelState.IsValid)
             {
@@ -81,7 +82,7 @@ namespace ShoppingDemo.App.Controllers
                 _customerComposition.SaveOrder(model,order,user.Id);
                 return RedirectToAction("Index","Home");
             }
-            return View(model);
+            return View(_customerComposition.MapOrderForm(user.Id));
         }
 
 

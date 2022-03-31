@@ -34,7 +34,7 @@ namespace ShoppingDemo.App.Data.Entites
         public Order()
         {
             Items = new List<OrderItem>();
-            Total = Items.Sum(x => x.ItemListing.Price * x.QuantityInCart);
+            Total = Items.Sum(x => x.Price * x.QuantityInCart);
         }
 
     }

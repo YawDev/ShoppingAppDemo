@@ -38,6 +38,8 @@ namespace ShoppingDemo.EFCore
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> orderItems { get; set; }
         public DbSet<ApplicationUser> User { get; set; }
+        public DbSet<Customer> Customer { get; set; }
+
         public DbSet<BillingAddress> BillingAddresses { get; set; }
         public DbSet<ShippingAddress> ShippingAddresses { get; set; }
         public DbSet<PaymentCard> PaymentCards { get; set; }

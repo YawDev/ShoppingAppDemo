@@ -41,7 +41,7 @@ namespace ShoppingDemo.App.Services
          {
             var cart = GetShoppingCart(user);
             var model = _mapper.Map<ShoppingCartModel>(cart);
-            model.Total = cart.Items.Sum(x => x.ItemListing.Price* x.QuantityInCart);
+            model.Total = cart.Items.Sum(x => x.Price* x.QuantityInCart);
             return model;
          }
 
@@ -54,17 +54,19 @@ namespace ShoppingDemo.App.Services
                     cart.Items = new List<ShoppingCartItem>();
                     cart.User = user;
                     _shoppingCartRepository.Add(cart);
-                    _shoppingCartRepository.Commit();
                 }
+                user.CartSessionId = cart.Id;
+                _shoppingCartRepository.Commit();
+
                 return cart;
         }
 
         public void RemoveCartItem(ShoppingCart cart,ItemModel model)
         {
 
-            if(cart.Items.Any(x => x.ItemListing?.Id == model.Id && x.QuantityInCart > 1))
+            if(cart.Items.Any(x => x.ItemId == model.Id && x.QuantityInCart > 1))
             {
-                var existingItem = cart.Items.FirstOrDefault(x => x.ItemListing.Id == model.Id);
+                var existingItem = cart.Items.FirstOrDefault(x => x.ItemId == model.Id);
                 existingItem.QuantityInCart--;
                 _shoppingCartRepository.Commit();
                 return;
@@ -78,11 +80,11 @@ namespace ShoppingDemo.App.Services
 
         public void AddCartItem(ShoppingCart cart, ItemModel model)
         {
-            if(cart.Items.Any(x => x.ItemListing?.Id == model.Id))
+            if(cart.Items.Any(x => x.ItemId == model.Id))
             {
-                var existingItem = cart.Items.FirstOrDefault(x => x.ItemListing.Id == model.Id);
+                var existingItem = cart.Items.FirstOrDefault(x => x.ItemId == model.Id);
                 existingItem.QuantityInCart++;
-                cart.Total = cart.Items.Sum(x => x.ItemListing.Price* x.QuantityInCart);
+                cart.Total = cart.Items.Sum(x => x.Price* x.QuantityInCart);
                 _shoppingCartRepository.Commit();
                 return;
             }
@@ -90,11 +92,14 @@ namespace ShoppingDemo.App.Services
             var shoppingCartItem = new ShoppingCartItem
             {
                 Cart = cart,
-                ItemListing = item,
-                QuantityInCart = 1
+                ItemId = item.Id,
+                QuantityInCart = 1,
+                Price = item.Price,
+                ImageFile = item.FileName,
+                Name = item.Name
             };
             cart.Items.Add(shoppingCartItem);
-            cart.Total = cart.Items.Sum(x => x.ItemListing.Price* x.QuantityInCart);
+            cart.Total = cart.Items.Sum(x => x.Price* x.QuantityInCart);
             _shoppingCartRepository.Commit();
         }
     }

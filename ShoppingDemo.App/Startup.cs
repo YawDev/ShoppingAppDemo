@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ShoppingDemo.App.Data.Entites;
+using ShoppingDemo.App.Data.Repositories;
 using ShoppingDemo.App.Services;
 using ShoppingDemo.EFCore;
 
@@ -40,22 +41,34 @@ namespace ShoppingAppDemo
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            AddRepositories(services);
+            AddServices(services);
+
+        }
+
+
+        public void AddRepositories(IServiceCollection services)
+        {
             services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
             services.AddScoped<IShoppingCartItemRepository, ShoppingCartItemRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IShoppingCartItemRepository, ShoppingCartItemRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
+        }
+
+        public void AddServices(IServiceCollection services)
+        {
             services.AddScoped<ICryptoService, CryptoService>();
             services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserDetailsComposition, UserDetailsComposition>();
             services.AddScoped<ICustomerOrderService, CustomerOrderService>();
             services.AddScoped<IUploadService, UploadService>();
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
             services.AddScoped<IItemService, ItemService>();
-
-
 
         }
 
