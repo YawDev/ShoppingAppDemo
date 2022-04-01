@@ -1,24 +1,35 @@
 # ShoppingAppDemo
 ASP.NET Core MVC 
 
-<img width="445" alt="image" src="https://user-images.githubusercontent.com/94807175/160370702-a9c735f8-f9e3-4e76-a795-4e33b08e74e1.png">
+
+#Create Item, Add to Cart, Place Order
+![image](https://user-images.githubusercontent.com/94807175/161338967-36eb9b16-b036-4619-bde3-a16d41f23c83.png)
 
 
-<img width="1229" alt="image" src="https://user-images.githubusercontent.com/94807175/160368223-4e8286ea-cdc3-4e4d-b703-b6280468dc76.png">
+![image](https://user-images.githubusercontent.com/94807175/161339046-8fa1b943-e3c7-40ba-8c55-f1b40a3a8739.png)
 
 
-
-<img width="1156" alt="image" src="https://user-images.githubusercontent.com/94807175/160368409-2f0d4a46-e9af-49e4-ab62-6803398a47d4.png">
-
-
-<img width="743" alt="image" src="https://user-images.githubusercontent.com/94807175/160368582-8ffd35e9-7c4b-49da-9bb0-3b27fa57d3bd.png">
+![image](https://user-images.githubusercontent.com/94807175/161339126-7f7674ef-87d1-4508-8b37-3dcf7a8577ce.png)
 
 
-<img width="512" alt="image" src="https://user-images.githubusercontent.com/94807175/160369480-2d413466-6170-4e7b-a483-67ada0de03a2.png">
+![image](https://user-images.githubusercontent.com/94807175/161339194-506c35c9-959c-4e77-b137-5295835c4ef0.png)
 
 
+![image](https://user-images.githubusercontent.com/94807175/161339221-ed72c05a-08eb-4df9-a839-067c594d59f2.png)
 
-![image](https://user-images.githubusercontent.com/94807175/161328416-1070886f-b0e2-47c7-ad49-2edceb6a7569.png)
+
+![image](https://user-images.githubusercontent.com/94807175/161339263-d96f14ee-cb23-4f88-a19f-08114d98b264.png)
 
 
+![image](https://user-images.githubusercontent.com/94807175/161339300-9dd5cbbc-36b7-45ba-bca2-29742858b2fd.png)
+
+
+![image](https://user-images.githubusercontent.com/94807175/161339359-bb84c561-bb29-40c6-adf1-9aa0945f6974.png)
+
+#Login, Register
+
+![image](https://user-images.githubusercontent.com/94807175/161339482-211f4dd4-208e-45cf-ba67-69a1e4181689.png)
+
+
+![image](https://user-images.githubusercontent.com/94807175/161339506-62ebf75a-a047-45d5-aaf5-52864813e3c7.png)
 
