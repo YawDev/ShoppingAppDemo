@@ -1,5 +1,5 @@
 # ShoppingAppDemo
-ASP.NET Core MVC 
+ASP.NET Core MVC , Identity Framework
 
 
 # Create Item, Add to Cart, Place Order
