@@ -36,15 +36,19 @@ namespace ShoppingDemo.App.Services
         private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly ICryptoService _cryptoService;
         private readonly IOrderService _orderService;
+        private readonly IEmailService _emailService;
+
         IMapper _mapper;
 
-        public CustomerOrderService(IOrderRepository orderRepository, IUserRepository userRepository, IShoppingCartRepository shoppingCartRepository, ICryptoService cryptoService, IOrderService orderService)
+        public CustomerOrderService(IOrderRepository orderRepository, IUserRepository userRepository, IShoppingCartRepository shoppingCartRepository, ICryptoService cryptoService, IOrderService orderService,
+        IEmailService emailService)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
             _shoppingCartRepository = shoppingCartRepository;
             _cryptoService = cryptoService;
             _orderService = orderService;
+            _emailService = emailService;
             _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
         }
 
@@ -142,6 +146,16 @@ namespace ShoppingDemo.App.Services
                 _orderService.MapModelToOrder(model, order);
                 _orderRepository.Add(order);
                 _orderRepository.Commit();
+                SendOrderConfirmationEmail(order);
+        }
+
+        public void SendOrderConfirmationEmail(Order order)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("Order Total: "+order.Total.ToString());
+            var messageTemplate = new EmailTemplate(new List<string>(){order.Email}, "Your Order has been succesfully recieved.", sb.ToString());
+            var message =_emailService.CreateEmailMessage(messageTemplate);
+            _emailService.SendMessage(message);
         }
 
        
