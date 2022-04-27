@@ -38,10 +38,12 @@ namespace ShoppingDemo.App.Controllers
             _userDetailsComposition = userDetailsComposition;
             _configuration = configuration;
             _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
+
         }
 
         public IActionResult Login()
         {
+            CreatePowerUser();
             return View();
         }
 
@@ -75,17 +77,17 @@ namespace ShoppingDemo.App.Controllers
         }
 
 
-        public async Task<IActionResult> Register()
+        public IActionResult Register()
         {
-            await CreateDefaultRoles();
-            CreatePowerUser();
+           CreateDefaultRoles();
             return View();
         }
 
         [HttpPost]
-        public IActionResult Register(RegisterModel model)
+        public async Task<IActionResult> Register(RegisterModel model)
         {
-            if(ModelState.IsValid)
+
+            if (ModelState.IsValid)
             {
                 var user =  new ApplicationUser
                 {
@@ -94,7 +96,7 @@ namespace ShoppingDemo.App.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName
                 }; 
-                _userManager.CreateAsync(user,model.Password);
+                await _userManager.CreateAsync(user,model.Password);
                 _userRepository.CreateUser(user);
                 _userRepository.Commit();
                 return RedirectToAction("Login");
@@ -102,25 +104,7 @@ namespace ShoppingDemo.App.Controllers
             return View(model);
         }
 
-        public async void CreatePowerUser()
-        {
-            var powerUser = _userRepository.GetByUserName(_configuration["PowerUser:UserName"]);
-            if(powerUser == null)
-            {
-                powerUser =  new ApplicationUser
-                {
-                    Email = _configuration["PowerUser:Email"],
-                    UserName = _configuration["PowerUser:UserName"],
-                    FirstName = "Sa",
-                    LastName = "Sudo"
-                };
-
-                await _userManager.CreateAsync(powerUser, _configuration["PowerUser:Password"]);
-                await _userManager.AddToRoleAsync(powerUser, "Admin");
-
-            }
-            
-        }
+       
 
         public IActionResult ViewAccount()
         {
@@ -227,14 +211,42 @@ namespace ShoppingDemo.App.Controllers
         }
 
 
-        public async Task CreateDefaultRoles()
+        public void CreateDefaultRoles()
         {
             if(!_roleManager.Roles.ToList().Any(x => x.Name == AppConstants.AdminRole))
-                await _roleManager.CreateAsync(new IdentityRole(AppConstants.AdminRole));
+                 _roleManager.CreateAsync(new IdentityRole(AppConstants.AdminRole));
 
             if(!_roleManager.Roles.ToList().Any(x => x.Name == AppConstants.UserRole))
-                await _roleManager.CreateAsync(new IdentityRole(AppConstants.UserRole));
+                 _roleManager.CreateAsync(new IdentityRole(AppConstants.UserRole));
+            
+            var powerUser = _userRepository.GetByUserName(_configuration["PowerUser:UserName"]);
+            if(powerUser != null)
+            {
+                var roleUsers = _userManager.GetUsersInRoleAsync("Admin");
+                if(!roleUsers.Result.ToList().Any(x => x.UserName == powerUser.UserName))
+                    _userManager.AddToRoleAsync(powerUser, "Admin");
+            }
+            
 
+        }
+
+        public void CreatePowerUser()
+        {
+            var powerUser = _userRepository.GetByUserName(_configuration["PowerUser:UserName"]);
+            if(powerUser == null)
+            {
+                powerUser =  new ApplicationUser
+                {
+                    Email = _configuration["PowerUser:Email"],
+                    UserName = _configuration["PowerUser:UserName"],
+                    FirstName = "Sa",
+                    LastName = "Sudo"
+                };
+
+                 _userManager.CreateAsync(powerUser, _configuration["PowerUser:Password"]);
+                _userRepository.CreateUser(powerUser);
+            }
+            
         }
 
 
