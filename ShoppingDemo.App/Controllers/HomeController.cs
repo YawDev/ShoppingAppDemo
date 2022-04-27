@@ -14,6 +14,7 @@ namespace ShoppingDemo.App.Controllers
     public class HomeController: Controller
     {
         private readonly ILogger<HomeController> _logger;
+
         private readonly IItemRepository _itemRepository;
 
          IMapper _mapper {get;set;}
@@ -64,5 +65,9 @@ namespace ShoppingDemo.App.Controllers
         {
             return View();
         }
+
+
+
+        
     }
 }
