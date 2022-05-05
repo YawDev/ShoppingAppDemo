@@ -96,10 +96,15 @@ namespace ShoppingDemo.App.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName
                 }; 
-                await _userManager.CreateAsync(user,model.Password);
-                _userRepository.CreateUser(user);
-                _userRepository.Commit();
-                return RedirectToAction("Login");
+                var userCreateResult = _userManager.CreateAsync(user,model.Password).Result;
+                if(userCreateResult.Succeeded)
+                {
+                    _userRepository.CreateUser(user);
+                    var result = _userManager.AddToRoleAsync(user, AppConstants.UserRole).Result;
+                    _userRepository.Commit();
+                    return RedirectToAction("Login");
+                }
+                
             }
             return View(model);
         }
@@ -224,7 +229,10 @@ namespace ShoppingDemo.App.Controllers
             {
                 var roleUsers = _userManager.GetUsersInRoleAsync("Admin");
                 if(!roleUsers.Result.ToList().Any(x => x.UserName == powerUser.UserName))
-                    _userManager.AddToRoleAsync(powerUser, "Admin");
+                {
+                    var result = _userManager.AddToRoleAsync(powerUser, "Admin").Result;
+                }   
+                _userRepository.Commit();
             }
             
 
@@ -245,6 +253,9 @@ namespace ShoppingDemo.App.Controllers
 
                  _userManager.CreateAsync(powerUser, _configuration["PowerUser:Password"]);
                 _userRepository.CreateUser(powerUser);
+
+                var result = _userManager.AddToRoleAsync(powerUser, AppConstants.AdminRole).Result;
+
             }
             
         }
