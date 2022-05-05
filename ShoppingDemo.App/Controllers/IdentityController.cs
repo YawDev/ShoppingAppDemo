@@ -9,6 +9,7 @@ using ShoppingDemo.App.Mapping;
 using ShoppingDemo.App.Services;
 using ShoppingDemo.EFCore;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ShoppingDemo.App.Controllers
@@ -104,7 +105,13 @@ namespace ShoppingDemo.App.Controllers
                     _userRepository.Commit();
                     return RedirectToAction("Login");
                 }
-                
+                var sb = new StringBuilder();
+                foreach(var error in userCreateResult.Errors)
+                {
+                    sb.Append(error.Description+" ,");
+                }
+                ViewBag.Message = sb.ToString();
+
             }
             return View(model);
         }
