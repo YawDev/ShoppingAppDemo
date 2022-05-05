@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shopper.App.Models;
 using ShoppingDemo.App.Data.Entites;
@@ -8,6 +9,8 @@ using ShoppingDemo.App.Mapping;
 using ShoppingDemo.App.Services;
 using ShoppingDemo.EFCore;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ShoppingDemo.App.Controllers
 {
@@ -16,26 +19,32 @@ namespace ShoppingDemo.App.Controllers
         private readonly ILogger<IdentityController> _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserRepository _userRepository;
         private readonly IUserDetailsComposition _userDetailsComposition;
+        IConfiguration _configuration;
 
 
         IMapper _mapper;
 
 
         public IdentityController(ILogger<IdentityController> logger, SignInManager<ApplicationUser> signInManager,  UserManager<ApplicationUser> userManager,
-        IUserRepository userRepository, IUserDetailsComposition userDetailsComposition)
+        IUserRepository userRepository, IUserDetailsComposition userDetailsComposition, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
             _userRepository = userRepository;
+            _roleManager = roleManager;
             _userDetailsComposition = userDetailsComposition;
+            _configuration = configuration;
             _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
+
         }
 
         public IActionResult Login()
         {
+            CreatePowerUser();
             return View();
         }
 
@@ -71,13 +80,15 @@ namespace ShoppingDemo.App.Controllers
 
         public IActionResult Register()
         {
+           CreateDefaultRoles();
             return View();
         }
 
         [HttpPost]
-        public IActionResult Register(RegisterModel model)
+        public async Task<IActionResult> Register(RegisterModel model)
         {
-            if(ModelState.IsValid)
+
+            if (ModelState.IsValid)
             {
                 var user =  new ApplicationUser
                 {
@@ -86,13 +97,26 @@ namespace ShoppingDemo.App.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName
                 }; 
-                _userManager.CreateAsync(user,model.Password);
-                _userRepository.CreateUser(user);
-                _userRepository.Commit();
-                return RedirectToAction("Login");
+                var userCreateResult = _userManager.CreateAsync(user,model.Password).Result;
+                if(userCreateResult.Succeeded)
+                {
+                    _userRepository.CreateUser(user);
+                    var result = _userManager.AddToRoleAsync(user, AppConstants.UserRole).Result;
+                    _userRepository.Commit();
+                    return RedirectToAction("Login");
+                }
+                var sb = new StringBuilder();
+                foreach(var error in userCreateResult.Errors)
+                {
+                    sb.Append(error.Description+" ,");
+                }
+                ViewBag.Message = sb.ToString();
+
             }
             return View(model);
         }
+
+       
 
         public IActionResult ViewAccount()
         {
@@ -196,6 +220,51 @@ namespace ShoppingDemo.App.Controllers
                 return RedirectToAction("ViewAccount");
             }
             return View(model);
+        }
+
+
+        public void CreateDefaultRoles()
+        {
+            if(!_roleManager.Roles.ToList().Any(x => x.Name == AppConstants.AdminRole))
+                 _roleManager.CreateAsync(new IdentityRole(AppConstants.AdminRole));
+
+            if(!_roleManager.Roles.ToList().Any(x => x.Name == AppConstants.UserRole))
+                 _roleManager.CreateAsync(new IdentityRole(AppConstants.UserRole));
+            
+            var powerUser = _userRepository.GetByUserName(_configuration["PowerUser:UserName"]);
+            if(powerUser != null)
+            {
+                var roleUsers = _userManager.GetUsersInRoleAsync("Admin");
+                if(!roleUsers.Result.ToList().Any(x => x.UserName == powerUser.UserName))
+                {
+                    var result = _userManager.AddToRoleAsync(powerUser, "Admin").Result;
+                }   
+                _userRepository.Commit();
+            }
+            
+
+        }
+
+        public void CreatePowerUser()
+        {
+            var powerUser = _userRepository.GetByUserName(_configuration["PowerUser:UserName"]);
+            if(powerUser == null)
+            {
+                powerUser =  new ApplicationUser
+                {
+                    Email = _configuration["PowerUser:Email"],
+                    UserName = _configuration["PowerUser:UserName"],
+                    FirstName = "Sa",
+                    LastName = "Sudo"
+                };
+
+                 _userManager.CreateAsync(powerUser, _configuration["PowerUser:Password"]);
+                _userRepository.CreateUser(powerUser);
+
+                var result = _userManager.AddToRoleAsync(powerUser, AppConstants.AdminRole).Result;
+
+            }
+            
         }
 
 

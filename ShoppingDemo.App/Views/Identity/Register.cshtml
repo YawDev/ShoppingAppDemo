@@ -5,7 +5,10 @@
 @using Shopper.App.Models;
 @model RegisterModel;
 
-
+@if(!String.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-danger">@ViewBag.Message</div>
+}
 
 <div class="container">
     <div class="row">
