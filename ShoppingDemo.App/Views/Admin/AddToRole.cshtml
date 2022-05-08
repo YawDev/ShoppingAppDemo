@@ -1,0 +1,29 @@
+@using Microsoft.AspNetCore.Identity;
+@using ShoppingDemo.App.Data.Entites;
+@using ShoppingDemo.App.Models;
+@inject UserManager<ApplicationUser> _userManager;
+
+@model AddUserToRoleViewModel
+
+@{
+    ViewData["Title"] = "Add To Role";
+}
+
+
+<h1>@ViewBag.Role Role</h1>
+<hr />
+    <form class="form-horizontal" asp-action="AddToRole" method="post">
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label  class="control-label"> Select User</label>
+                <select name="Users" class="form-control" asp-items="@ViewBag.Options" asp-for=@Model.user></select>
+
+
+            </div>
+        </div>
+             <div class="form-group">
+                   <input type="submit" value="Add User" class="btn btn-primary"/>
+                </div>
+        </form>

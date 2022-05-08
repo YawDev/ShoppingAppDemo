@@ -4,7 +4,10 @@
 @using Microsoft.AspNetCore.Identity
 @using Shopper.App.Models;
 @model IEnumerable<ItemModel>;
+@using ShoppingDemo.App;
 @inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
 @using ShoppingDemo.App.Data.Entites;
 
 
@@ -55,8 +58,8 @@
           
           </td>
                 <td><img src="@("~/Images/"+item.FileName)" asp-append-version="true" width="110px" height="80px" /></td>
-
-      <td>
+@if(UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, AppConstants.AdminRole).Result)
+ {    <td>
             <a class="btn btn-danger btn-sm" 
                       asp-controller="Item"
                       asp-action="Delete"
@@ -68,7 +71,7 @@
                       asp-controller="Item"
                       asp-action="Edit"
                       asp-route-id="@item.Id"> <i style="font-size:10px" class="fa">&#xf044;</i> Edit </a>
-           </td>
+           </td>}
            @if (SignInManager.IsSignedIn(User))
             {
                 <td>

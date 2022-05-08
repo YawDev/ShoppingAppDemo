@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -77,7 +78,7 @@ namespace ShoppingDemo.App.Controllers
             return View(model);
         }
 
-
+        [AllowAnonymous]
         public IActionResult Register()
         {
            CreateDefaultRoles();
@@ -266,6 +267,12 @@ namespace ShoppingDemo.App.Controllers
             }
             
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
 
 
     }
