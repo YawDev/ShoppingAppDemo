@@ -34,9 +34,10 @@
           <td>
               @user.FirstName      @user.LastName       @if(user.FirstName != "Sa"){
                                                         <a class="btn btn-danger btn-sm" 
-                                                        asp-controller="Item"
-                                                        asp-action="Delete"
-                                                        asp-route-id="user.Id"> Remove </a>}
+                                                        asp-controller="Admin"
+                                                        asp-action="RemoveFromRole"
+                                                        asp-route-role=@role.Name
+                                                        asp-route-id=@user.Id> Remove </a>}
           </td>
       }
     </tr>     

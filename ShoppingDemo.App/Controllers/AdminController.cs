@@ -68,15 +68,22 @@ namespace ShoppingDemo.App.Controllers
             return RedirectToAction(nameof(ManageUsers));
         }
 
-        public IActionResult RemoveFromRole(string id)
+        public IActionResult RemoveFromRole(string id,string role)
         {
+            var user = _userRepository.GetByUserId(id);
+            ViewBag.Id = id;
+            ViewBag.FullName = user.FirstName+" "+user.LastName;
+            ViewBag.Role = role;
             return View();
         }
         
         [HttpPost]
-        public IActionResult RemoveFromRole()
+        public IActionResult RemoveFromRole(RemoveUserFromRoleViewModel model)
         {
-            return View();
+            var user = _userRepository.GetByUserId(model.UserId);
+            var result = _userManager.RemoveFromRoleAsync(user, model.Role).Result;
+
+            return RedirectToAction(nameof(ManageUsers));
         }
     }
 }
