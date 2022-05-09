@@ -19,15 +19,18 @@ namespace ShoppingDemo.App.Controllers
         private readonly ILogger<AdminController> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserRepository _userRepository;
+
         IMapper _mapper {get;set;}
 
         public AdminController(ILogger<AdminController> logger, 
-        UserManager<ApplicationUser> userManager,RoleManager<IdentityRole> roleManager)
+        UserManager<ApplicationUser> userManager,RoleManager<IdentityRole> roleManager, IUserRepository userRepository)
         {
             _logger = logger;
             _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
             _userManager = userManager;
             _roleManager = roleManager;
+            _userRepository = userRepository;
         }
 
         public IActionResult ManageUsers()
@@ -58,7 +61,11 @@ namespace ShoppingDemo.App.Controllers
         [HttpPost]
         public IActionResult AddToRole(AddUserToRoleViewModel model)
         {
-            return View();
+            var userId = model.user;
+            var user = _userRepository.GetByUserId(userId);
+            var result = _userManager.AddToRoleAsync(user, model.Role).Result;
+
+            return RedirectToAction(nameof(ManageUsers));
         }
 
         public IActionResult RemoveFromRole(string id)

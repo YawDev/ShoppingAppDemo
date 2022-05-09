@@ -9,10 +9,16 @@
     ViewData["Title"] = "Add To Role";
 }
 
-
-<h1>@ViewBag.Role Role</h1>
+<h1>Add To Role</Ri:a></h1>
 <hr />
     <form class="form-horizontal" asp-action="AddToRole" method="post">
+
+    <div class="row">
+        <div class="col-md-4">
+   <div class="form-group">
+                   <label class="control-label">Role</label>
+                    <input asp-for="@Model.Role"  class="form-control"type="text"  name="RoleInput" value=@ViewBag.Role readonly/>
+                </div>
 
     <div class="row">
         <div class="col-md-4">

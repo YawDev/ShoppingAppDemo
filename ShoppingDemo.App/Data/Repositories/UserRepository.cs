@@ -66,6 +66,13 @@ namespace ShoppingDemo.EFCore
 
         }
 
+
+        public ApplicationUser GetByUserFullName(string fullname)
+        {
+            var nameSplit = fullname.Split(" ");
+            return null;
+        }
+
         public void CreateUser(ApplicationUser user)
         {
             _context.User.Add(user);

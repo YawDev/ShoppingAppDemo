@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ShoppingDemo.App.Models
 {
@@ -9,12 +8,6 @@ namespace ShoppingDemo.App.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-    }
-
-    public class AddUserToRoleViewModel
-    {
-    [   BindProperty(Name = "Users")]
-        public string user {get; set;}
     }
 
   
