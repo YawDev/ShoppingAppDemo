@@ -17,6 +17,7 @@ using ShoppingDemo.EFCore;
 
 namespace ShoppingDemo.App.Controllers
 {
+    [Authorize]
     public class ItemController : Controller
     {
         private readonly ILogger<ItemController> _logger;

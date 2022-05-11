@@ -8,9 +8,11 @@ using Shopper.App.Models;
 using ShoppingDemo.App.Data.Entites;
 using ShoppingDemo.App.Mapping;
 using ShoppingDemo.EFCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ShoppingDemo.App.Controllers
 {
+    [Authorize]
     public class HomeController: Controller
     {
         private readonly ILogger<HomeController> _logger;

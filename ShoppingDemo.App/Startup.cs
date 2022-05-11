@@ -39,7 +39,10 @@ namespace ShoppingAppDemo
             .AddDefaultTokenProviders();
 
 
-            services.ConfigureApplicationCookie(opt => opt.AccessDeniedPath = new PathString("/Identity/AccessDenied"));
+            services.ConfigureApplicationCookie(
+                opt => opt.AccessDeniedPath = new PathString("/Identity/AccessDenied")
+                
+                ).ConfigureApplicationCookie(opt => opt.LoginPath = new PathString("/Identity/Login"));
 
             services.Configure<DataProtectionTokenProviderOptions>(opt =>
                 opt.TokenLifespan = TimeSpan.FromMinutes(30));

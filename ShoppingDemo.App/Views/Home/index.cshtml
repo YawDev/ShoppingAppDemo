@@ -10,6 +10,14 @@
 
 @using ShoppingDemo.App.Data.Entites;
 
+<style>
+.card-img-top {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
+}
+
+</style>
 
 <h1>Browse Items</h1>
 
@@ -28,7 +36,13 @@
                                 <h4 class="card-title">@item.Name</h4>
                                 <small class="text-muted">$@item.Price </small>
                                 <hr>
-                                <p class="card-text">@item.Description
+                                <p class="card-text">@if(String.IsNullOrEmpty(@item.Description))
+                                    {
+                                        <p>No description available.</p>
+                                    }
+                                    else{
+                                        @item.Description
+                                    }
                                </p>@if (SignInManager.IsSignedIn(User)){
                                      @if(item.inStock){
                 <a class="btn btn-primary btn-sm" 

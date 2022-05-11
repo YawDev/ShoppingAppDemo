@@ -42,13 +42,13 @@ namespace ShoppingDemo.App.Controllers
             _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
 
         }
-
+       [AllowAnonymous]
         public IActionResult Login()
         {
             CreatePowerUser();
             return View();
         }
-
+       [Authorize]
         public IActionResult Logout()
         {
             _signInManager.SignOutAsync();
@@ -118,11 +118,10 @@ namespace ShoppingDemo.App.Controllers
         }
 
        
-
+       [Authorize]
         public IActionResult ViewAccount()
         {
-            if(_signInManager.IsSignedIn(User))
-            {
+           
                 var user = _userRepository.GetByUserId(_userManager.GetUserId(User));
                 var cardInfo = _userRepository.GetCardInformation(user.Id);
                 var shippingAddress = _userRepository.GetShippingAddress(user.Id);
@@ -140,25 +139,22 @@ namespace ShoppingDemo.App.Controllers
                 model.Address = _mapper.Map<AddressModel>(shippingAddress);
                 model.CardInfo = _mapper.Map<CardInfoModel>(cardInfo);
                 return View(model);
-            }
-            return RedirectToAction("Login");
+    
         }
 
-
+       [Authorize]
         public IActionResult EditAddress()
         {
-            if(_signInManager.IsSignedIn(User))
+       
+            var shippingAddress = _userRepository.GetShippingAddress(_userManager.GetUserAsync(User).Result.Id);
+            if(shippingAddress == null)
             {
-                var shippingAddress = _userRepository.GetShippingAddress(_userManager.GetUserAsync(User).Result.Id);
-                if(shippingAddress == null)
-                {
-                    shippingAddress = new ShippingAddress();
-                }
+                shippingAddress = new ShippingAddress();
+            }
 
                 
-                return View(_mapper.Map<AddressModel>(shippingAddress));
-            }
-            return RedirectToAction("Login");
+            return View(_mapper.Map<AddressModel>(shippingAddress));
+        
         }
 
         [HttpPost]
@@ -174,10 +170,10 @@ namespace ShoppingDemo.App.Controllers
             return View(model);
         }
 
+       [Authorize]
         public IActionResult EditPaymentDetails()
         {
-            if(_signInManager.IsSignedIn(User))
-            {
+          
                 var user = _userManager.GetUserAsync(User).Result;
                 var cardInfo = _userRepository.GetCardInformation(user.Id);
 
@@ -202,8 +198,7 @@ namespace ShoppingDemo.App.Controllers
                 model.BillingAddress.Country = cardInfo.BillingAddress.Country;
 
                 return View(model);
-            }
-            return RedirectToAction("Login");
+            
         }
 
         [HttpPost]
