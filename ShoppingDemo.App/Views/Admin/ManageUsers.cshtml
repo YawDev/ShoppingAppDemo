@@ -15,11 +15,12 @@
 {
     foreach (var role in Model)
     {
-        <br></br>
+      if(role.Name.Equals("Admin"))
+        {<br></br>
             <a class="btn btn-primary btn-sm" 
                                                         asp-controller="Admin"
                                                         asp-action="AddToRole"
-                                                        asp-route-role=@role.Name> Add User </a><br></br>
+                                                        asp-route-role=@role.Name> Add User </a><br></br>}
  <table class="table">
   <thead class="thead-dark">
     <tr>
@@ -27,20 +28,20 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
 
       @foreach (var user in _userManager.GetUsersInRoleAsync(role.Name).Result)
-      {
+      {    <tr>
+
           <td>
-              @user.FirstName      @user.LastName       @if(user.FirstName != "Sa"){
+              @user.FirstName      @user.LastName       @if((user.FirstName != "Sa" && role.Name.Equals("Admin"))){
                                                         <a class="btn btn-danger btn-sm" 
                                                         asp-controller="Admin"
                                                         asp-action="RemoveFromRole"
                                                         asp-route-role=@role.Name
                                                         asp-route-id=@user.Id> Remove </a>}
-          </td>
+          </td>    </tr>     
+
       }
-    </tr>     
   </tbody>
 </table>
     }
