@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ using ShoppingDemo.EFCore;
 
 namespace ShoppingDemo.App.Controllers
 {
+    [Authorize]
     public class OrderController :  Controller
     {
 
@@ -34,32 +36,23 @@ namespace ShoppingDemo.App.Controllers
 
         public IActionResult ViewOrders()
         {
-            if(_signInManager.IsSignedIn(User))
-            {
-                var user = _userManager.GetUserAsync(User).Result;
-                return View(_customerComposition.GetOrders(user.Id));
-            }
-            return RedirectToAction("Login");
+         
+            var user = _userManager.GetUserAsync(User).Result;
+            return View(_customerComposition.GetOrders(user.Id));
+    
         }
 
 
         public IActionResult ViewOrderDetail(Guid Id)
         {
-            if(_signInManager.IsSignedIn(User))
-                return View(_customerComposition.GetOrderDetails(Id));
-            
-            return RedirectToAction("Login");      
+            return View(_customerComposition.GetOrderDetails(Id));
         }
 
 
         public IActionResult PlaceOrder()
         {
-            if(_signInManager.IsSignedIn(User))
-            {
-                var user = _userManager.GetUserAsync(User).Result;
-                return View(_customerComposition.MapOrderForm(user.Id));
-            }
-            return RedirectToAction("Login");
+            var user = _userManager.GetUserAsync(User).Result;
+            return View(_customerComposition.MapOrderForm(user.Id));
         }
 
         [HttpPost]

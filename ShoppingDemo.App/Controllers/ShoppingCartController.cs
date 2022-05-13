@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ using ShoppingDemo.EFCore;
 
 namespace ShoppingDemo.App.Controllers
 {
+    [Authorize]
     public class ShoppingCartController : Controller
     {
         private readonly ILogger<ShoppingCartController> _logger;
@@ -35,25 +37,19 @@ namespace ShoppingDemo.App.Controllers
 
         public IActionResult ViewCart()
         {
-            if(_signInManager.IsSignedIn(User))
-            {
-                var user = _userManager.GetUserAsync(User).Result;
-                return View(_shoppingCartService.MapShoppingCartModel(user));
-            }
-            return RedirectToAction("Login","Identity");
+       
+            var user = _userManager.GetUserAsync(User).Result;
+            return View(_shoppingCartService.MapShoppingCartModel(user));
+
         }
 
         public IActionResult AddToCart(Guid Id)
         {
-            if(_signInManager.IsSignedIn(User))
-            {
-                var user = _userManager.GetUserAsync(User).Result;
-                var cart = _shoppingCartService.GetShoppingCart(user);
-                var item = _itemService.FindItem(Id);
-                return View(_mapper.Map<ItemModel>(item));
-                
-            }
-            return RedirectToAction("Login","Identity");        
+            var user = _userManager.GetUserAsync(User).Result;
+            var cart = _shoppingCartService.GetShoppingCart(user);
+            var item = _itemService.FindItem(Id);
+            return View(_mapper.Map<ItemModel>(item));
+       
         }
 
         [HttpPost]
@@ -71,15 +67,12 @@ namespace ShoppingDemo.App.Controllers
 
         public IActionResult RemoveFromCart(Guid Id)
         {
-            if(_signInManager.IsSignedIn(User))
-            {
-                var user = _userManager.GetUserAsync(User).Result;
-                var cart = _shoppingCartService.GetShoppingCart(user);
-                var item = _itemService.FindItem(Id);
-                return View(_mapper.Map<ItemModel>(item));
-                
-            }
-            return RedirectToAction("Login","Identity");        
+
+            var user = _userManager.GetUserAsync(User).Result;
+            var cart = _shoppingCartService.GetShoppingCart(user);
+            var item = _itemService.FindItem(Id);
+            return View(_mapper.Map<ItemModel>(item));
+     
         }
         [HttpPost]
         public IActionResult RemoveFromCart(ItemModel model)

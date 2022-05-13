@@ -1,0 +1,52 @@
+@using Microsoft.AspNetCore.Identity;
+@using ShoppingDemo.App.Data.Entites;
+
+@inject UserManager<ApplicationUser> _userManager;
+
+@model List<IdentityRole>
+
+@{
+    ViewData["Title"] = "Manage Roles";
+}
+
+<h1>Manage Roles</h1>
+
+@if(Model.ToList().Count > 0)
+{
+    foreach (var role in Model)
+    {
+      if(role.Name.Equals("Admin"))
+        {<br></br>
+            <a class="btn btn-primary btn-sm" 
+                                                        asp-controller="Admin"
+                                                        asp-action="AddToRole"
+                                                        asp-route-role=@role.Name> Add User </a><br></br>}
+ <table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">@role.Name Role</th>
+    </tr>
+  </thead>
+  <tbody>
+
+      @foreach (var user in _userManager.GetUsersInRoleAsync(role.Name).Result)
+      {    <tr>
+
+          <td>
+              @user.FirstName      @user.LastName       @if((user.FirstName != "Sa" && role.Name.Equals("Admin"))){
+                                                        <a class="btn btn-danger btn-sm" 
+                                                        asp-controller="Admin"
+                                                        asp-action="RemoveFromRole"
+                                                        asp-route-role=@role.Name
+                                                        asp-route-id=@user.Id> Remove </a>}
+          </td>    </tr>     
+
+      }
+  </tbody>
+</table>
+    }
+}
+else
+{
+  <p>No Roles Found.</p>
+}

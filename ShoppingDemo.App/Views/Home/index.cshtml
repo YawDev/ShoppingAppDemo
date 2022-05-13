@@ -4,90 +4,72 @@
 @using Microsoft.AspNetCore.Identity
 @using Shopper.App.Models;
 @model IEnumerable<ItemModel>;
+@using ShoppingDemo.App;
 @inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
 @using ShoppingDemo.App.Data.Entites;
 
+<style>
+.card-img-top {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
+}
 
+</style>
 
 <h1>Browse Items</h1>
 
 
 @if(!(Model.Count() == 0))
 {
-  <table class="table">
-  <thead class="thead-light">
-    <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Price</th>
-      <th scope="col">Description</th>
-      <th scope="col">Quantity</th>
-      <th scope="col">In Stock</th>
-      <th scope="col">Image</th>
-            <th scope="col"></th>
-      <th scope="col"></th>
-      <th scope="col"></th>
 
+<div class="row">
 
-
-
-
-    </tr>
-  </thead>
-  <tbody>
-
-         @foreach (var item in Model)
-        {
-    <tr>
-      <td>@item.Name</td>
-      <td>$@item.Price</td>
-      <td>@item.Description</td>
-      <td>@item.Quantity</td>
-      <td>
-          @if(item.inStock)
-          {
-              <p>In Stock</p>
-          }
-          else
-          {
-              <p>Out Of Stock</p>
-          }
-          
-          
-          </td>
-                <td><img src="@("~/Images/"+item.FileName)" asp-append-version="true" width="110px" height="80px" /></td>
-
-      <td>
-            <a class="btn btn-danger btn-sm" 
-                      asp-controller="Item"
-                      asp-action="Delete"
-                      asp-route-id="@item.Id"> Delete </a>
-           </td>
-
-        <td>
-            <a class="btn btn-primary btn-sm" 
-                      asp-controller="Item"
-                      asp-action="Edit"
-                      asp-route-id="@item.Id"> <i style="font-size:10px" class="fa">&#xf044;</i> Edit </a>
-           </td>
-           @if (SignInManager.IsSignedIn(User))
-            {
-                <td>
-                  @if(item.inStock)
-                  {
+  @foreach (var item in Model)
+  {
+      <section class="col-lg-3 col-md-6 py-3">
+                        <div class="card">
+                            <img src="@("~/Images/"+item.FileName)" asp-append-version="true" width="50px" height="50px" class="img-fluid card-img-top" />
+                            <div class="card-body">
+                                <h4 class="card-title">@item.Name</h4>
+                                <small class="text-muted">$@item.Price </small>
+                                <hr>
+                                <p class="card-text">@if(String.IsNullOrEmpty(@item.Description))
+                                    {
+                                        <p>No description available.</p>
+                                    }
+                                    else{
+                                        @item.Description
+                                    }
+                               </p>@if (SignInManager.IsSignedIn(User)){
+                                     @if(item.inStock){
                 <a class="btn btn-primary btn-sm" 
                       asp-controller="ShoppingCart"
                       asp-action="AddToCart"
                       asp-route-id="@item.Id"> <i style="font-size:10px" class="fa">&#xf07a;</i> Buy </a>
-                  }
-                 
-           </td>
-            }
-      
+                  }}
 
-    </tr>
-        }
-  </tbody>
-</table>
+@if(UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, AppConstants.AdminRole).Result)
+ {  
+                  <a class="btn btn-danger btn-sm" 
+                      asp-controller="Item"
+                      asp-action="Delete"
+                      asp-route-id="@item.Id"> Delete </a>
+
+
+                       <a class="btn btn-primary btn-sm" 
+                      asp-controller="Item"
+                      asp-action="Edit"
+                      asp-route-id="@item.Id"> <i style="font-size:10px" class="fa">&#xf044;</i> Edit </a>}
+                            </div>
+                        </div>
+             </section>
+  }
+    </div>
+
+  
 }
 else
 {

@@ -6,7 +6,7 @@ namespace ShoppingDemo.EFCore
     {
           int Commit();
         
-
+        ApplicationUser GetByUserFullName(string fullname);
          ShippingAddress GetShippingAddress(string userId);
         
 

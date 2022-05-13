@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +17,7 @@ using ShoppingDemo.EFCore;
 
 namespace ShoppingDemo.App.Controllers
 {
+    [Authorize]
     public class ItemController : Controller
     {
         private readonly ILogger<ItemController> _logger;
@@ -30,7 +32,8 @@ namespace ShoppingDemo.App.Controllers
             _mapper = new MapperConfiguration(cfg => cfg.AddProfile<EntityToQueryDtoMapper>()).CreateMapper();
             _itemService = itemService;
         }
-
+        
+        [Authorize(Roles = "Admin")]
         public IActionResult Add()
         {
             return View();
@@ -56,7 +59,7 @@ namespace ShoppingDemo.App.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(Guid Id)
         {
             var item = _itemService.FindItem(Id);
@@ -73,7 +76,7 @@ namespace ShoppingDemo.App.Controllers
          
         }
 
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(Guid Id)
         {
             var item = _itemService.FindItem(Id);

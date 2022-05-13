@@ -1,0 +1,35 @@
+@using Microsoft.AspNetCore.Identity;
+@using ShoppingDemo.App.Data.Entites;
+@using ShoppingDemo.App.Models;
+@inject UserManager<ApplicationUser> _userManager;
+
+@model RemoveUserFromRoleViewModel
+
+@{
+    ViewData["Title"] = "Remove From Role";
+}
+
+<h1>Remove @ViewBag.FullName</Ri:a></h1>
+<hr />
+    <form class="form-horizontal" asp-action="RemoveFromRole" method="post">
+
+    <div class="row">
+        <div class="col-md-4">
+   <div class="form-group">
+                   <label class="control-label">Role</label>
+                    <input asp-for="@Model.Role"  class="form-control"type="text"  name="RoleInput" value=@ViewBag.Role readonly/>
+                </div>
+
+     <div class="row">
+        <div class="col-md-8">
+   <div class="form-group">
+                   <label class="control-label">UserId</label>
+                    <input asp-for="@Model.UserId"  class="form-control"type="text"  name="UserId" value=@ViewBag.Id readonly/>
+                </div>
+
+            <br></br>
+
+             <div class="form-group">
+                   <input type="submit" value="Confirm" class="btn btn-primary"/>
+                </div>
+        </form>

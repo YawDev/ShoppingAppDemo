@@ -1,6 +1,7 @@
 using Shopper.App.Models;
 using ShoppingDemo.App.Data.Entites;
 using ShoppingDemo.App.Data.Enums;
+using ShoppingDemo.App.Models;
 
 namespace ShoppingDemo.App.Mapping
 {
@@ -37,6 +38,10 @@ namespace ShoppingDemo.App.Mapping
             CreateMap<AddressModel, BillingAddress>();
             CreateMap<CardModel, CardInformation>();
             CreateMap<CardInformation, CardInfoModel>();
+
+            CreateMap<ApplicationUser, UserModel>();
+
+
 
 
         }
